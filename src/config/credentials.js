@@ -29,7 +29,7 @@ const getCredentials = () => {
             return production;
 
         default:
-            return development;
+            return production;
     }
     
 }
