@@ -2,12 +2,12 @@
   "name": "seafood-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "type":"module",
+  "main": "dist",
+  "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_ENV=development nodemon --exec babel-node ./src --trace-warnings",
-    "serve": "NODE_ENV=production node ./dist  --source-maps ",
+    "serve": "node ./dist  --source-maps ",
     "build": "babel ./src -d dist",
     "doc": "rm -rf dist/public && apidoc -i src/ -o dist/public",
     "dist": "babel src -s -D -d dist && npm run doc"
@@ -37,8 +37,14 @@
   "devDependencies": {
     "@babel/cli": "^7.17.3",
     "@babel/core": "^7.17.5",
+    "@babel/node": "^7.16.8",
+    "@babel/plugin-proposal-class-properties": "^7.16.7",
+    "@babel/plugin-proposal-object-rest-spread": "^7.17.3",
+    "@babel/plugin-transform-regenerator": "^7.16.7",
     "@babel/preset-env": "^7.16.11",
+    "@babel/register": "^7.17.0",
     "babel-core": "^7.0.0-bridge.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "nodemon": "^2.0.15"
   },
   "engines": {
