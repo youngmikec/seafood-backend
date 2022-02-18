@@ -2,7 +2,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import cors from 'cors';
-import bodyParser from 'body-parser'
+import bodyParser from 'body-parser';
+import compression from 'compression';
+import helmet from 'helmet';
+
+
 import appApi from "./api/index.js";
 import database from "./config/index.js";// import appApi from "./api";
 
@@ -25,9 +29,11 @@ database.on('close', () => {
     database.removeAllListeners();
 })
 
+app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(cors(corsOptions));
+app.use(compression());
 app.use(express.json());
 
 
