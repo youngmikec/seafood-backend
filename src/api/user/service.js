@@ -13,7 +13,7 @@ import { generateCode, hash, safeGet, setLimit, generateOtp } from "../../util/h
 import { JWT, USER_TYPE } from "../../constant/index.js";
 
 const module = "User";
-
+//@ts-check
 export const fetchService = async (query) => {
     try{
         let { filter, skip, population, sort, projection } = aqp(query);
@@ -194,16 +194,16 @@ export const loginService = async (loginPayload) => {
       if (error) throw new Error(`Error validating User data. ${error.message}`);
       const { email, phone, code } = data;
   
-      const filterOpt = {
-        phone,
-        isActive: true,
-        createdAt: { $gte: moment(new Date()).subtract(30, "minutes").toDate() },
-      };
-      const otpRecord = await Otp.findOne(filterOpt).exec();
-      console.log({ otpRecord });
-      if (!otpRecord || !bcryptjs.compareSync(code, `${otpRecord.code}`)) {
-        throw new Error(`Invalid access code ${code}`);
-      }
+      // const filterOpt = {
+      //   phone,
+      //   isActive: true,
+      //   createdAt: { $gte: moment(new Date()).subtract(30, "minutes").toDate() },
+      // };
+      // const otpRecord = await Otp.findOne(filterOpt).exec();
+      // console.log({ otpRecord });
+      // if (!otpRecord || !bcryptjs.compareSync(code, `${otpRecord.code}`)) {
+      //   throw new Error(`Invalid access code ${code}`);
+      // }
       const duplicatePhone = await User.findOne({ phone }).exec();
       if (duplicatePhone) {
         throw new Error(`Error! Record already exist for phone ${phone}`);
@@ -213,7 +213,7 @@ export const loginService = async (loginPayload) => {
         throw new Error(`Error! Record already exist for email ${email}`);
       }
       if (safeGet(data, "password")) data.password = hash(data.password);
-      data.wallet = await generateWallet();
+      // data.wallet = await generateWallet();
       const newRecord = new User(data);
       const result = await newRecord.save();
       if (!result) {
@@ -221,14 +221,15 @@ export const loginService = async (loginPayload) => {
       }
       const mailData = {
         recipientEmail: result.email,
-        subject: "FreexitNow Registration",
-        body: `Welcome to freexitnow.com your login email is ${result.email} -FREEXIT`,
+        subject: "Seafood User Registration",
+        body: `Welcome to seafood.com your login email is ${result.email} -SEAFOOD`,
       };
-      if (result.email) {
-        Mails.createService(mailData)
-          .then()
-          .catch((err) => console.log(err.message));
-      }
+      // Remember to send mail when Users creates their account
+      // if (result.email) {
+      //   Mails.createService(mailData)
+      //     .then()
+      //     .catch((err) => console.log(err.message));
+      // }
       return { status: result.status };
     } catch (err) {
       throw new Error(`Error creating User record. ${err.message}`);
@@ -360,14 +361,15 @@ export const loginService = async (loginPayload) => {
       }
       const mailData = {
         recipientEmail: result.email,
-        subject: "FreexitNow Login OTP",
-        body: `Use this one-time password to login to your freexitnow.com account - OTP: ${otp} -FREEXIT`,
+        subject: "Seafood Login OTP",
+        body: `Use this one-time password to login to your seafood.com account - OTP: ${otp} -SEAFOOD`,
       };
-      if (result.email) {
-        Mails.createService(mailData)
-          .then()
-          .catch((err) => console.log(err.message));
-      }
+      //Uncomment this field as soon as you have integrated mail sending functionality.
+      // if (result.email) {
+      //   Mails.createService(mailData)
+      //     .then()
+      //     .catch((err) => console.log(err.message));
+      // }
       return true;
     } catch (err) {
       throw new Error(`Error sending User record. ${err.message}`);
