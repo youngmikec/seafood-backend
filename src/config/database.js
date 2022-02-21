@@ -5,6 +5,7 @@ mongoose.Promise = global.Promise;
 
 const { uri, options } = credentials;
 
+
 mongoose.connect(uri, options)
     .then(() => { console.log("Connected to database!"); })
     .catch((error) => {

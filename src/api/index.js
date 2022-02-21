@@ -1,11 +1,12 @@
 import express from 'express'
-import route from './user/index.js';
+import userRoute from './user/index.js';
+import parcelRoute from './parcel/index.js';
 
 
 const router = express.Router();
 
-
-router.use(route);
+router.use(parcelRoute);
+router.use(userRoute);
 
 
 export default router;

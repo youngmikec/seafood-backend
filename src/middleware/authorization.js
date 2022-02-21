@@ -86,7 +86,7 @@ function checkRequestMethod(req, res, next) {
         break;
     case "DELETE":
         req.body = {};
-        if (safeGet(req.user, "type") !== "ADMIN") {
+        if (safeGet(req.user, "userType") !== "ADMIN") {
             return fail(res, 403, "Insufficient user priveleges");
         }
         if (req.params.recordId) {
