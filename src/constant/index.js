@@ -53,6 +53,15 @@ export const PAYMENT = {
   },
 };
 
+export const PACKAGE = {
+  STATUS: {
+    PENDING: "PENDING",
+    CHECKEDOUT: "CHECKEDOUT",
+    PICKUP: "PICKUP",
+    CANCELLED: "CANCELLED"
+  }
+}
+
 export const EMAIL = {
   ADMIN: "freexittechnologies@gmail.com",
   SENDER: "sender@freexitnow.com",

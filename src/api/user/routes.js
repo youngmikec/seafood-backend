@@ -33,8 +33,8 @@ const router = express.Router();
  * @apiSuccess {Object[]} Array of Objects of records.
  * @apiError {Object} 400 Some parameters may contain invalid values.
  */
-// router.get("/user", [checkAuth, isValidAdmin], fetchHandler);
-router.get("/user", fetchHandler);
+router.get("/user", [checkAuth, isValidAdmin], fetchHandler);
+// router.get("/user", fetchHandler);
 
 router.get("/user/me", [checkAuth], fetchSelfHandler);
 
@@ -130,15 +130,15 @@ router.post("/user", createHandler);
  * @apiError 404 User not found.
  * @apiError 401 master access only.
  */
-router.put(
-  "/user/admin/:recordId",
-  updateByAdminHandler
-);
 // router.put(
 //   "/user/admin/:recordId",
-//   [checkAuth, isValidAdmin],
 //   updateByAdminHandler
 // );
+router.put(
+  "/user/admin/:recordId",
+  [checkAuth, isValidAdmin],
+  updateByAdminHandler
+);
 
 /**
  * @api {put} /api/user/me Update User by Self

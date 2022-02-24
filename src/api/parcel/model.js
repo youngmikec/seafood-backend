@@ -1,5 +1,5 @@
 /**
- * @author Nditah
+ * @author Ozor Michael Chisom
  * @property {ObjectId} _id Parcel record Id (prohibited)
  * @property {String} name Parcel name (required)
  * @property {String} code Parcel code (required)
