@@ -69,6 +69,7 @@
     ).required(),
     status: Joi.string().required(),
     remark: Joi.string().required(),
+    transactionRef: Joi.string().optional(),
     isCheckedOut: Joi.boolean().required(),
     paymentMethod: Joi.string().required(),
     paymentGateway: Joi.string().required(),
@@ -106,6 +107,7 @@
     paymentGateway: Joi.string().optional(),
     paymentStatus: Joi.string().valid("PENDING", "SUCCESS", "FAIL").optional(),
     pickupDate: Joi.date().optional(),
+    transactionRef: Joi.string().optional(),
     deliveryDate: Joi.date().optional(),
     createdBy: Joi.string()
     .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
@@ -139,6 +141,7 @@
     paymentGateway: Joi.string().optional(),
     paymentStatus: Joi.string().optional(),
     pickupDate: Joi.date().optional(),
+    transactionRef: Joi.string().optional(),
     deliveryDate: Joi.date().optional(),
     createdBy: Joi.string()
     .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
@@ -156,7 +159,7 @@
  export const schema = {
     code: { type: String, uppercase: true, index: true, required: true },
     name: { type: String, trim: true },
-    parcels: { type: Array, required: true, default: []},
+    parcels: [{ type: String, ref: "Parcel" }],
     totalAmount: { type: Number, min: 0, deafult: 1 },
     totalShipingFee: { type: Number, min: 0, max: 9_000_000, deafult: 1 },
      senderName: { type: String,},
@@ -169,6 +172,7 @@
      deliveryCoordinates: { type: Array, required: true },
      status: { type: String,  enum: Object.values(PACKAGE.STATUS), default: "PENDING"},
      remark: { type: String },
+     transactionRef: { type: String },
      isCheckedOut: { type: Boolean, required: true, default: false },
      paymentMethod: { type: String, enum: Object.values(PAYMENT.PAYMENT_METHOD) },
      paymentGateway: { type: String, enum: Object.values(PAYMENT.GATEWAY) },
