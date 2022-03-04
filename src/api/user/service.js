@@ -64,6 +64,11 @@ export const loginService = async (loginPayload) => {
       if (userType === USER_TYPE.ADMIN) {
         filter.userType = USER_TYPE.ADMIN;
       }
+
+      if (userType === USER_TYPE.SENDER) {
+        filter.userType = USER_TYPE.SENDER;
+      }
+
       if (type === "PHONE" || type === "OTP") {
         filter.phone = phone;
       } else {
@@ -71,8 +76,13 @@ export const loginService = async (loginPayload) => {
       }
       const user = await User.findOne(filter).select("+password").exec();
       if (!user) {
-        throw new Error("User not found.");
+        throw new Error("User not found. Check your details and try again.");
       }
+
+      if (user.userType != filter.userType) {
+        throw new Error("Error Login! User type mistach.");
+      }
+
       if (!(user.accessLevel > 1)) throw new Error("Insufficient Access Level");
       if (type === "OTP" && otp) {
         if (!user.otpAccess) {
