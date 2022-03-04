@@ -66,6 +66,7 @@ const router = express.Router();
  * @apiError 404 Parcels not found.
  * @apiError 401 master Parcels only.
  */
+
  router.post("/parcel", [checkAuth], createHandler);
 //  router.post("/parcel/admin", [checkAuth, isValidAdmin], adminCreateHandler);
 

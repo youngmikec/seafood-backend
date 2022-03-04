@@ -210,7 +210,6 @@ export const schema = {
     pickupCoordinates: { type: Array, required: true },
     status: { type: String, required: true, default: "PENDING"},
     isParcelPaid: { type: Boolean },
-    category: { type: String },
     amountPayable: { type: Number, default: 1000, required: true },
     shippingFee: { type: Number, default: 500, required: true },
     identification: { type: String },
@@ -218,12 +217,6 @@ export const schema = {
     depatureDate: { type: Date }, // Parcel Departure date
     expectedDate: { type: Date }, // Parcel Departure date
     remark: { type: String },
-    amountPayable: {
-      type: Number,
-      default: PARCEL.MIN_CHARGE,
-      min: PARCEL.MIN_CHARGE,
-      max: PARCEL.MAX_CHARGE,
-    },
     paymentMethod: { type: String, enum: Object.values(PAYMENT.PAYMENT_METHOD) },
     paymentGateway: { type: String, enum: Object.values(PAYMENT.GATEWAY) },
     paymentStatus: {
