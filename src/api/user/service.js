@@ -112,7 +112,7 @@ export const loginService = async (loginPayload) => {
       user.otp = null;
       delete user.password;
       delete user.otp;
-      const payload = { id: `${user.id}`, time: new Date() };
+      const payload = { id: `${user.id}`, time: new Date(), userType: user.userType };
       const token = jwt.sign(payload, JWT.jwtSecret, {
         expiresIn: JWT.tokenExpireTime,
       });

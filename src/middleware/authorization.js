@@ -36,6 +36,7 @@ export async function checkAuth(req, res, next) {
         const token = getToken(req);
         if (!token) return fail(res, 403, "No token found in request header!");
         const decoded = await decodeToken(token);
+        console.log('decoded', decoded);
         const user = await User.findById(decoded.id).exec();
         if(!user){
             throw new Error('User not found');
@@ -45,7 +46,7 @@ export async function checkAuth(req, res, next) {
         const { accessLevel, email, phone } = user;
             req.user = {
                 id: decoded.id,
-                // userType,
+                userType: decoded.userType,
                 accessLevel,
                 email,
                 phone,
