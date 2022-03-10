@@ -37,25 +37,30 @@ export async function checkAuth(req, res, next) {
         if (!token) return fail(res, 403, "No token found in request header!");
         const decoded = await decodeToken(token);
         const user = await User.findById(decoded.id).exec();
-        const { userType, accessLevel, email, phone } = user;
+        if(!user){
+            throw new Error('User not found');
+        }
+
+        // const { userType, accessLevel, email, phone } = user;
+        const { accessLevel, email, phone } = user;
             req.user = {
                 id: decoded.id,
-                userType,
+                // userType,
                 accessLevel,
                 email,
                 phone,
                 // currentIp: getRequestIp(req),
 
             };
-            delete req.query.apiKey;
-            if(user.deleted == 1) throw new Error("User is deleted")
-            if(user.accessLevel == 0) throw new Error("Access is denied")
-            return checkRequestMethod(req, res, next);
-          } catch (err) {
-            // loging(module, req, err);
-            return fail(res, 403, `Authenticated failed! ${err.message}`);
-          }
+        delete req.query.apiKey;
+        if(user.deleted == 1) throw new Error("User is deleted")
+        if(user.accessLevel == 0) throw new Error("Access is denied")
+        return checkRequestMethod(req, res, next);
+    } catch (err) {
+        // loging(module, req, err);
+        return fail(res, 403, `Authenticated failed! ${err.message}`);
         }
+    }
 
 // eslint-disable-next-line complexity
 function checkRequestMethod(req, res, next) {
@@ -103,6 +108,7 @@ function checkRequestMethod(req, res, next) {
 
 export function isValidAdmin(req, res, next) {
     try {
+        console.log(req.user);
         const { userType } = req.user;
         if (userType === USER_TYPE.ADMIN) return next();
         return fail(res, 403, "Invalid ADMIN credentials!");
