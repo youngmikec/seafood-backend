@@ -50,6 +50,54 @@ export async function fetchService({ query, user }) {
     }
   }
 
+  // const updateParcelStatus = (records) => {
+  //   const result = await Parcel.updateMany({})
+  // }
+
+  const calculateCost = (records) => {
+    const cummulativeAmount = records.map(item => item.amountPayable).reduce((a,b) => a + b);
+    const cummulativeShippingFee = records.map(item => item.shippingFee).reduce((a,b) => a + b);
+    return { amount: cummulativeAmount, shippingFee: cummulativeShippingFee };
+  }
+
+  export async function adminCreateService(data) {
+    try {
+      const { error } = validateAdminCreate.validate(data);
+      if (error) {
+        throw new Error(`Invalid request. ${error.message}`);
+      }
+      // validateParcelDate(data);
+      // if (!data.sender) data.sender = data.createdBy;
+      const { parcels } = data;
+      const parcelRecords = await Parcel.find().where('_id').in(parcels).exec();
+    
+      if(parcelRecords){
+        const { amount, shippingFee } = calculateCost(parcelRecords);
+        data.totalAmount = amount;
+        data.totalShipingFee = shippingFee;
+        // updateParcelStatus(parcelRecords);
+        const updatedParcels = await Parcel.updateMany({_id: parcels}, {$set: {"status": 'PACKAGED'}});
+        if(!updatedParcels){
+          throw new Error(`Error updating parcel status`);
+        }
+
+      }
+      data.code = await generateModelCode(Package);
+      const senderObj = await User.findById(data.createdBy).exec();
+      if (!senderObj) throw new Error(`Sender ${data.createdBy} not found`);
+      // data.amountPayable = generateAmountPayable(data);
+      data.createdBy = senderObj.id;
+      
+      const newRecord = new Package(data);
+      const result = await newRecord.save();
+      if (!result) {
+        throw new Error(`${module} record not found.`);
+      }
+      return result;
+    } catch (err) {
+      throw new Error(`Error creating ${module} record. ${err.message}`);
+    }
+  }
   export async function createService(data) {
     try {
       const { error } = validateCreate.validate(data);
@@ -60,13 +108,17 @@ export async function fetchService({ query, user }) {
       // if (!data.sender) data.sender = data.createdBy;
       const { parcels } = data;
       const parcelRecords = await Parcel.find().where('_id').in(parcels).exec();
-      let cummulativeAmount = 0;
-      let cummulativeShippingFee = 0;
+      
       if(parcelRecords){
-        cummulativeAmount = parcelRecords.map(item => item.amountPayable).reduce((a,b) => a + b);
-        cummulativeShippingFee = parcelRecords.map(item => item.shippingFee).reduce((a,b) => a + b);
-        data.totalAmount = cummulativeAmount;
-        data.totalShipingFee = cummulativeShippingFee;
+        const { amount, shippingFee } = calculateCost(parcelRecords);
+        data.totalAmount = amount;
+        data.totalShipingFee = shippingFee;
+        // updateParcelStatus(parcelRecords);
+        const updatedParcels = await Parcel.updateMany({_id: parcels}, {$set: {"status": 'PACKAGED'}});
+        if(!updatedParcels){
+          throw new Error(`Error updating parcel status`);
+        }
+
       }
       data.code = await generateModelCode(Package);
       const senderObj = await User.findById(data.createdBy).exec();

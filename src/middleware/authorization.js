@@ -36,7 +36,6 @@ export async function checkAuth(req, res, next) {
         const token = getToken(req);
         if (!token) return fail(res, 403, "No token found in request header!");
         const decoded = await decodeToken(token);
-        console.log('decoded', decoded);
         const user = await User.findById(decoded.id).exec();
 
         // const { userType, accessLevel, email, phone } = user;
@@ -106,7 +105,6 @@ function checkRequestMethod(req, res, next) {
 
 export function isValidAdmin(req, res, next) {
     try {
-        console.log(req.user);
         const { userType } = req.user;
         if (userType === USER_TYPE.ADMIN) return next();
         return fail(res, 403, "Invalid ADMIN credentials!");

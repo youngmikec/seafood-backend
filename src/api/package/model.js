@@ -53,12 +53,15 @@
     parcels: Joi.array().items(
         Joi.string().regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
     ).required(),
-    totalAmount: Joi.number().min(0).required(),
-    totalShipingFee: Joi.number().min(0).required(),
+    amountPayable: Joi.number().min(0).required(),
+    totalAmount: Joi.number().min(0).optional(),
+    totalShipingFee: Joi.number().min(0).optional(),
     senderName:Joi.string().trim().required(),
     senderPhone: Joi.string().required(),
+    senderEmail: Joi.string().email().required(),
     recipientName:Joi.string().trim().required(),
     recipientPhone: Joi.string().required(),
+    recipientEmail: Joi.string().email().required(),
     pickupAddress: Joi.string().required(),
     pickupCoordinates: Joi.array().items(
         Joi.number()
@@ -67,12 +70,12 @@
     deliveryCoordinates: Joi.array().items(
         Joi.number()
     ).required(),
-    status: Joi.string().required(),
+    status: Joi.string().valid("PENDING", "CHECKEDOUT", "SHIPPED", "PICKUP", "CANCELLED", "ARRIVED", "DELIVERED").optional(),
     remark: Joi.string().required(),
     transactionRef: Joi.string().optional(),
     isCheckedOut: Joi.boolean().required(),
     paymentMethod: Joi.string().required(),
-    paymentGateway: Joi.string().required(),
+    paymentGateway: Joi.string().optional(),
     paymentStatus: Joi.string().required(),
     pickupDate: Joi.date().optional(),
     deliveryDate: Joi.date().optional(),
@@ -86,12 +89,15 @@
     parcels: Joi.array().items(
         Joi.string().regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
     ).required(),
+    amountPayable: Joi.number().min(0).required(), 
     totalAmount: Joi.number().min(0).optional(),
     totalShipingFee: Joi.number().min(0).optional(),
     senderName:Joi.string().trim().required(),
     senderPhone: Joi.string().required(),
+    senderEmail: Joi.string().email().required(),
     recipientName:Joi.string().trim().required(),
     recipientPhone: Joi.string().required(),
+    recipientEmail: Joi.string().email().required(),
     pickupAddress: Joi.string().required(),
     pickupCoordinates: Joi.array().items(
         Joi.number()
@@ -103,11 +109,11 @@
     status: Joi.string().valid("PENDING", "CHECKEDOUT", "SHIPPED", "PICKUP", "CANCELLED", "ARRIVED", "DELIVERED").optional(),
     remark: Joi.string().required(),
     isCheckedOut: Joi.boolean().required(),
-    paymentMethod: Joi.string().optional(),
-    paymentGateway: Joi.string().optional(),
+    paymentMethod: Joi.string().required(),
+    paymentGateway: Joi.string().required(),
     paymentStatus: Joi.string().valid("PENDING", "SUCCESS", "FAIL").optional(),
     pickupDate: Joi.date().optional(),
-    transactionRef: Joi.string().optional(),
+    transactionRef: Joi.string().required(),
     deliveryDate: Joi.date().optional(),
     createdBy: Joi.string()
     .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
@@ -120,6 +126,7 @@
     parcels: Joi.array().items(
         Joi.string().regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
     ).optional(),
+    amountPayable: Joi.number().min(0).optional(),
     totalAmount: Joi.number().min(0).optional(),
     totalShipingFee: Joi.number().min(0).optional(),
     senderName:Joi.string().trim().optional(),
@@ -160,12 +167,15 @@
     code: { type: String, uppercase: true, index: true, required: true },
     name: { type: String, trim: true },
     parcels: [{ type: String, ref: "Parcel" }],
-    totalAmount: { type: Number, min: 0, deafult: 1 },
-    totalShipingFee: { type: Number, min: 0, max: 9_000_000, deafult: 1 },
-     senderName: { type: String,},
-     senderPhone: { type: String, },
-     recipientName: { type: String,},
-     recipientPhone: { type: String, },
+    amountPayable: { type: Number, min: 1000, max: 9_000_000, deafult: 1 },
+    totalAmount: { type: Number, min: 1000, max: 9_000_000, deafult: 1 },
+    totalShipingFee: { type: Number, min: 500, max: 9_000_000, deafult: 1 },
+     senderName: { type: String, required: true},
+     senderPhone: { type: String, required: true},
+     senderEmail: { type: String, required: true},
+     recipientName: { type: String, required: true},
+     recipientPhone: { type: String, required: true},
+     recipientEmail: { type: String, required: true},
      pickupAddress: { type: String, required: true },
      pickupCoordinates: { type: Array, required: true },
      deliveryAddress: { type: String, required: true },

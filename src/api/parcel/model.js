@@ -56,20 +56,20 @@ export const validateAdminCreate = Joi.object({
     mass: Joi.number().required(),
     worth: Joi.number().required(),
     parcelImage: Joi.string().optional(),
-    deliveryAddress: Joi.string().required(),
-    deliveryCoordinates: Joi.array().items(
-        Joi.number()
-    ).required(),
-    senderName: Joi.string().required(),
-    senderPhone: Joi.string().max(15).required(),
-    senderEmail: Joi.string().email().required(),
-    recipientName: Joi.string().required(),
-    recipientPhone: Joi.string().max(15).required(),
-    recipientEmail: Joi.string().email().required(),
-    pickupAddress: Joi.string().required(),
-    pickupCoordinates: Joi.array().items(
-        Joi.number()
-    ).required(),
+    // deliveryAddress: Joi.string().required(),
+    // deliveryCoordinates: Joi.array().items(
+    //     Joi.number()
+    // ).required(),
+    // senderName: Joi.string().required(),
+    // senderPhone: Joi.string().max(15).required(),
+    // senderEmail: Joi.string().email().required(),
+    // recipientName: Joi.string().required(),
+    // recipientPhone: Joi.string().max(15).required(),
+    // recipientEmail: Joi.string().email().required(),
+    // pickupAddress: Joi.string().required(),
+    // pickupCoordinates: Joi.array().items(
+    //     Joi.number()
+    // ).required(),
     departureDate: Joi.date().required(),
     expectedDate:  Joi.date().required(),
     deliveryDate:  Joi.date().optional(),
@@ -79,9 +79,9 @@ export const validateAdminCreate = Joi.object({
     amountPayable: Joi.number().min(1000).max(9999999999999).required(),
     shippingFee: Joi.number().min(100).required(),
     identification: Joi.string().valid("NATIONAL_ID", "VOTERS_CARD", "COMPANY_ID", "DRIVERS_LICENSE").required(),
-    paymentMethod: Joi.string().valid(PAYMENT.PAYMENT_METHOD).required(),
-    paymentGateway: Joi.string().valid(PAYMENT.GATEWAY).required(),
-    paymentStatus: Joi.string().valid(PAYMENT.STATUS).default(PAYMENT.STATUS.PENDING).required(),
+    // paymentMethod: Joi.string().valid(PAYMENT.PAYMENT_METHOD).required(),
+    // paymentGateway: Joi.string().valid(PAYMENT.GATEWAY).required(),
+    // paymentStatus: Joi.string().valid(PAYMENT.STATUS).default(PAYMENT.STATUS.PENDING).required(),
     remark: Joi.string().optional(),
     createdBy: Joi.string()
     .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
@@ -96,25 +96,25 @@ export const validateCreate = Joi.object({
     mass: Joi.number().required(),
     worth: Joi.number().required(),
     parcelImage: Joi.string().optional(),
-    deliveryAddress: Joi.string().required(),
-    deliveryCoordinates: Joi.array().items(
-        Joi.number()
-    ).required(),
-    senderName: Joi.string().required(),
-    senderPhone: Joi.string().max(15).required(),
-    senderEmail: Joi.string().email().required(),
-    recipientName: Joi.string().required(),
-    recipientPhone: Joi.string().max(15).required(),
-    recipientEmail: Joi.string().email().required(),
-    pickupAddress: Joi.string().required(),
-    pickupCoordinates: Joi.array().items(
-        Joi.number()
-    ).required(),
+    // deliveryAddress: Joi.string().required(),
+    // deliveryCoordinates: Joi.array().items(
+    //     Joi.number()
+    // ).required(),
+    // senderName: Joi.string().required(),
+    // senderPhone: Joi.string().max(15).required(),
+    // senderEmail: Joi.string().email().required(),
+    // recipientName: Joi.string().required(),
+    // recipientPhone: Joi.string().max(15).required(),
+    // recipientEmail: Joi.string().email().required(),
+    // pickupAddress: Joi.string().required(),
+    // pickupCoordinates: Joi.array().items(
+    //     Joi.number()
+    // ).required(),
     departureDate: Joi.date().optional(),
     expectedDate:  Joi.date().optional(),
     deliveryDate:  Joi.date().optional(),
     status: Joi.string().valid("PENDING", "PACKAGED", "SHIPPED", "ARRIVED", "DELIVERED", "CONFIRMED").optional(),
-    isParcelPaid: Joi.boolean().required(),
+    // isParcelPaid: Joi.boolean().required(),
     category: Joi.string().required(),
     amountPayable: Joi.number().min(1000).max(9999999999999).optional(), // estimate billing and add to amountPayable
     shippingFee: Joi.number().min(100).optional(), // estimate shipping fee and add to shipping fee
@@ -134,33 +134,33 @@ export const validateUpdate = Joi.object({
     mass: Joi.number().optional(),
     worth: Joi.number().optional(),
     parcelImage: Joi.string().optional(),
-    deliveryAddress: Joi.string().optional(),
-    deliveryCoordinates: Joi.array().items(
-        Joi.number()
-    ).optional(),
-    senderName: Joi.string().optional(),
-    senderPhone: Joi.string().max(15).optional(),
-    senderEmail: Joi.string().email().optional(),
-    recipientName: Joi.string().optional(),
-    recipientPhone: Joi.string().max(15).optional(),
-    recipientEmail: Joi.string().email().optional(),
-    pickupAddress: Joi.string().optional(),
-    pickupCoordinates: Joi.array().items(
-        Joi.number()
-    ).optional(),
+    // deliveryAddress: Joi.string().optional(),
+    // deliveryCoordinates: Joi.array().items(
+    //     Joi.number()
+    // ).optional(),
+    // senderName: Joi.string().optional(),
+    // senderPhone: Joi.string().max(15).optional(),
+    // senderEmail: Joi.string().email().optional(),
+    // recipientName: Joi.string().optional(),
+    // recipientPhone: Joi.string().max(15).optional(),
+    // recipientEmail: Joi.string().email().optional(),
+    // pickupAddress: Joi.string().optional(),
+    // pickupCoordinates: Joi.array().items(
+    //     Joi.number()
+    // ).optional(),
     departureDate: Joi.date().optional(),
     expectedDate:  Joi.date().optional(),
     deliveryDate:  Joi.date().optional(),
     shippedDate:   Joi.date().optional(),
     confirmDate:   Joi.date().optional(),
     status: Joi.string().valid("PENDING", "PACKAGED", "SHIPPED", "ARRIVED", "DELIVERED", "CONFIRMED").optional(),
-    isParcelPaid: Joi.boolean().optional(),
+    // isParcelPaid: Joi.boolean().optional(),
     amountPayable: Joi.number().min(1000).max(9999999999999).optional(),
     shippingFee: Joi.number().min(100).optional(),
     identification: Joi.string().valid("NATIONAL_ID", "VOTERS_CARD", "COMPANY_ID", "DRIVERS_LICENSE").optional(),
-    paymentGateway: Joi.string().optional(),
-    paymentMethod: Joi.string().optional(),
-    paymentStatus: Joi.string().optional(),
+    // paymentGateway: Joi.string().optional(),
+    // paymentMethod: Joi.string().optional(),
+    // paymentStatus: Joi.string().optional(),
     remark: Joi.string().optional(),
     updatedBy: Joi.string()
     .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
@@ -198,18 +198,18 @@ export const schema = {
     description: { type: String },
     
     parcelImage: { type: String },
-    deliveryAddress: { type: String, required: true },
-    deliveryCoordinates: { type: Array, required: true },
-    senderName: { type: String, required: true },
-    senderPhone: { type: String, required: true },
-    senderEmail: { type: String, required: true },
-    recipientName: { type: String, required: true },
-    recipientPhone: { type: String, required: true },
-    recipientEmail: { type: String, required: true },
-    pickupAddress: { type: String, required: true },
-    pickupCoordinates: { type: Array, required: true },
+    // deliveryAddress: { type: String, required: true },
+    // deliveryCoordinates: { type: Array, required: true },
+    // senderName: { type: String, required: true },
+    // senderPhone: { type: String, required: true },
+    // senderEmail: { type: String, required: true },
+    // recipientName: { type: String, required: true },
+    // recipientPhone: { type: String, required: true },
+    // recipientEmail: { type: String, required: true },
+    // pickupAddress: { type: String, required: true },
+    // pickupCoordinates: { type: Array, required: true },
     status: { type: String, required: true, default: "PENDING"},
-    isParcelPaid: { type: Boolean },
+    // isParcelPaid: { type: Boolean },
     amountPayable: { type: Number, default: 1000, required: true },
     shippingFee: { type: Number, default: 500, required: true },
     identification: { type: String },
@@ -217,13 +217,13 @@ export const schema = {
     depatureDate: { type: Date }, // Parcel Departure date
     expectedDate: { type: Date }, // Parcel Departure date
     remark: { type: String },
-    paymentMethod: { type: String, enum: Object.values(PAYMENT.PAYMENT_METHOD) },
-    paymentGateway: { type: String, enum: Object.values(PAYMENT.GATEWAY) },
-    paymentStatus: {
-      type: String,
-      enum: Object.values(PAYMENT.STATUS),
-      default: PAYMENT.STATUS.PENDING,
-    },
+    // paymentMethod: { type: String, enum: Object.values(PAYMENT.PAYMENT_METHOD) },
+    // paymentGateway: { type: String, enum: Object.values(PAYMENT.GATEWAY) },
+    // paymentStatus: {
+    //   type: String,
+    //   enum: Object.values(PAYMENT.STATUS),
+    //   default: PAYMENT.STATUS.PENDING,
+    // },
     
     pickupDate: { type: Date },
     shippedDate: { type: Date },

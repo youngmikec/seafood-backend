@@ -1,6 +1,7 @@
 import {
     fetchService,
     createService,
+    adminCreateService,
     updateService,
     deleteService,
 } from './service.js';
@@ -22,6 +23,16 @@ export async function fetchHandler(req, res) {
 export async function createHandler(req, res) {
   try {
     const result = await createService(req.body);
+    return success(res, 201, result);
+  } catch (err) {
+  //   loging(module, req, err);
+    return fail(res, 400, err.message);
+  }
+}
+
+export async function adminCreateHandler(req, res) {
+  try {
+    const result = await adminCreateService(req.body);
     return success(res, 201, result);
   } catch (err) {
   //   loging(module, req, err);
