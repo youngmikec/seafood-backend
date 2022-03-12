@@ -168,7 +168,7 @@
     name: { type: String, trim: true },
     parcels: [{ type: String, ref: "Parcel" }],
     amountPayable: { type: Number, min: 1000, max: 9_000_000, deafult: 1 },
-    totalAmount: { type: Number, min: 1000, max: 9_000_000, deafult: 1 },
+    totalAmount: { type: Number, max: 9_000_000, deafult: 1 },
     totalShipingFee: { type: Number, min: 500, max: 9_000_000, deafult: 1 },
      senderName: { type: String, required: true},
      senderPhone: { type: String, required: true},
