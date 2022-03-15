@@ -105,9 +105,9 @@ export async function fetchService({ query, user }) {
       if (`${returnedShipment.createdBy}` !== user.id) {
         throw new Error(`user ${user.email} is not an authorized user`);
       }
-      if (`${returnedShipment.status}` !== "LOADING") {
-        throw new Error(`Payment Status is  ${returnedShipment.status}`);
-      }
+      // if (`${returnedShipment.status}` !== "LOADING") {
+      //   throw new Error(`Payment Status is  ${returnedShipment.status}`);
+      // }
      
       const result = await Shipment.findOneAndUpdate({ _id: recordId }, data, {
         new: true,
