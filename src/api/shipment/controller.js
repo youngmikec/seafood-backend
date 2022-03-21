@@ -2,6 +2,7 @@ import {
     fetchService,
     createService,
     updateService,
+    operationService,
     deleteService,
 }from './service.js';
 
@@ -35,6 +36,17 @@ export async function updateHandler(req, res) {
   try {
     const { recordId } = req.params;
     const result = await updateService(recordId, req.body, req.user);
+    return success(res, 200, result);
+  } catch (err) {
+  //   loging(module, req, err);
+    return fail(res, 400, `${err.message}`);
+  }
+}
+
+export async function operationHandler(req, res) {
+  try {
+    const { recordId } = req.params;
+    const result = await operationService(recordId, req.body, req.user);
     return success(res, 200, result);
   } catch (err) {
   //   loging(module, req, err);

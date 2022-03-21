@@ -4,10 +4,12 @@ import moment from "moment";
 import Shipment, { 
     validateCreate,
     validateUpdate,
+    validateOperation,
 } from "./model.js";
 
 import User from '../user/model.js';
 import Parcel from '../parcel/model.js';
+import Package from '../package/model.js';
 
 import {
   generateModelCode,
@@ -105,6 +107,7 @@ export async function fetchService({ query, user }) {
       if (`${returnedShipment.createdBy}` !== user.id) {
         throw new Error(`user ${user.email} is not an authorized user`);
       }
+
       // if (`${returnedShipment.status}` !== "LOADING") {
       //   throw new Error(`Payment Status is  ${returnedShipment.status}`);
       // }
@@ -119,7 +122,57 @@ export async function fetchService({ query, user }) {
     } catch (err) {
       throw new Error(`Error updating ${module} record. ${err.message}`);
     }
+  }
 
+  export const operationService = async (recordId, data, user) => {
+    try{
+      const { error } = validateOperation.validate(data);
+      if (error) {
+        throw new Error(`Invalid request. ${error.message}`);
+      }
+      const { status } = data;
+
+      const returnedShipment = await Shipment.findById(recordId).exec();
+      if (!returnedShipment) throw new Error(`${module} record not found.`);
+      if (`${returnedShipment.createdBy}` !== user.id) {
+        throw new Error(`user ${user.email} is not an authorized user`);
+      }
+      const { packages } = returnedShipment;
+      console.log('shipment', returnedShipment);
+
+      
+      if(packages.length > 0){
+        console.log('got here');
+        if(status === 'DEPARTED'){
+          const updatedPackages = await Package.updateMany({_id: packages}, {$set: {"status": 'SHIPPED'}});
+          if(!updatedPackages){
+            throw new Error(`Error updating Package status`);
+          }
+        }
+
+        if(status === 'ARRIVED'){
+          const updatedPackages = await Package.updateMany({_id: packages}, {$set: {"status": 'ARRIVED'}});
+          if(!updatedPackages){
+            throw new Error(`Error updating Package status`);
+          }
+        }
+      }
+
+      if(packages.length <= 0){
+        throw new Error(`Error! Cannot depart an empty shipment, add some packages`);
+      }
+
+
+      const result = await Shipment.findOneAndUpdate({ _id: recordId }, data, {
+        new: true,
+      }).exec();
+      if (!result) {
+        throw new Error(`${module} record not found.`);
+      }
+      return result;
+    } catch (err) {
+      throw new Error(`Error performing shipment operation ${err.message}`);
+    }
   }
   
   export async function deleteService(recordId) {

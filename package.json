@@ -33,6 +33,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "mongoose": "^5.12.3",
+    "nodemailer": "^6.7.2",
     "slugify": "^1.6.5"
   },
   "devDependencies": {

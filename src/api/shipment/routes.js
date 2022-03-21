@@ -4,6 +4,7 @@ import {
     fetchHandler,
     createHandler,
     updateHandler,
+    operationHandler,
     deleteHandler,
 } from './controller.js';
 
@@ -80,6 +81,7 @@ const router = express.Router();
   */
  
   router.put("/shipment/:recordId", [checkAuth, isValidAdmin], updateHandler);
+  router.put("/shipment/operation/:recordId", [checkAuth, isValidAdmin], operationHandler);
 
   /**
   * @api {delete} /shipment/{recordId} Delete Parcels

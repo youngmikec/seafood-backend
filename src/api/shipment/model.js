@@ -6,6 +6,12 @@ import { DATABASE } from "../../constant/index.js";
 const { Schema } = mongoose;
 const { ObjectId } = Schema.Types;
 
+export const validateOperation = Joi.object({
+    status: Joi.string().valid("LOADING", "DEPARTED", "ARRIVED").required(),
+    remark: Joi.string().required(),
+    updatedBy: Joi.string().regex(DATABASE.OBJECT_ID_REGEX, "valid objectID").optional(),
+})
+
 
 export const validateCreate = Joi.object({
     packages: Joi.array().items(
@@ -32,7 +38,7 @@ export const validateCreate = Joi.object({
             Joi.number()
         ).required()
     }).required(),
-    status: Joi.string().valid("LOADING", "DEPARTED", "ARRIVED").required(),
+    status: Joi.string().valid("LOADING").required(),
     departureDate: Joi.date().required(),
     expectedDate: Joi.date().required(),
     courierName: Joi.string().required(),
@@ -69,7 +75,6 @@ export const validateUpdate = Joi.object({
             Joi.number()
         ).required()
     }).optional(),
-    status: Joi.string().valid("LOADING", "DEPARTED", "ARRIVED").optional(),
     departureDate: Joi.date().optional(),
     expectedDate: Joi.date().optional(),
     courierName: Joi.string().optional(),
@@ -98,7 +103,7 @@ export const schema = {
     departureDate: { type: Date },
     expectedDate: { type: Date },
     createdBy: { type: ObjectId, ref: "User", required: true, select: true },
-    updatedBy: { type: ObjectId, ref: "User", select: false },
+    updatedBy: { type: ObjectId, ref: "User", select: true },
     deleted: { type: Boolean, default: false, select: false },
     deletedAt: { type: Date, select: false },
     deletedBy: { type: ObjectId, select: false },
