@@ -47,7 +47,7 @@ app.get('/', (req, res) => {
 app.use("/api", appApi);
 
 
-app.listen(port, (error) => {
+app.listen(port, async (error) => {
     if(error) console.log(`Error starting server on port ${port}`);
     console.log(`server running on port ${port}`);
 });

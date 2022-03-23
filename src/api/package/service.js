@@ -18,9 +18,24 @@ import {
   loging,
   calculateDistance,
 } from "../../util/index.js";
-import { PARCEL, PAYMENT, USER_TYPE } from "../../constant/index.js";
+import { PAYMENT, USER_TYPE,  } from "../../constant/index.js";
+import { sendMail } from "../../services/index.js";
 
 const module = 'Package';
+
+const sendMailService = async (data, subject, message) => {
+  try{
+    const result = await sendMail(
+      'michaelozor15@seafood.com',
+      data.senderEmail,
+      subject,
+      message
+    );
+    console.log('Mail sent successfully');
+  }catch (err){
+    console.error(err);
+  }
+}
 
 export async function fetchService({ query, user }) {
     try {
@@ -93,11 +108,25 @@ export async function fetchService({ query, user }) {
       if (!result) {
         throw new Error(`${module} record not found.`);
       }
+      
+      const mailResponse = await sendMailService(
+        data,
+        'Package Created Successfully',
+        `
+        <b>
+          Dear customer ${data.senderName || ''}, your package with ${parcels.length || 0} parcel item(s) has been created successfully.
+          Package is currently awaiting shipment.
+          Your package Code: <h3>${data.code}</h3>
+          Thank you for trusting us.
+        </b>
+        `
+      );
       return result;
     } catch (err) {
       throw new Error(`Error creating ${module} record. ${err.message}`);
     }
   }
+
   export async function createService(data) {
     try {
       const { error } = validateCreate.validate(data);
@@ -131,6 +160,18 @@ export async function fetchService({ query, user }) {
       if (!result) {
         throw new Error(`${module} record not found.`);
       }
+      const mailResponse = await sendMailService(
+        data,
+        'Package Created Successfully',
+        `
+        <b>
+          Dear customer ${data.senderName || ''}, your package with ${parcels.length || 0} parcel item(s) has been created successfully.
+          Package is currently awaiting shipment.
+          Your package Code: <h3>${data.code}</h3>
+          Thank you for trusting us.
+        </b>
+        `
+      );
       return result;
     } catch (err) {
       throw new Error(`Error creating ${module} record. ${err.message}`);

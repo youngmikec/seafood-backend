@@ -8,8 +8,9 @@ import Shipment, {
 } from "./model.js";
 
 import User from '../user/model.js';
-import Parcel from '../parcel/model.js';
 import Package from '../package/model.js';
+import { sendMail } from "../../services/index.js";
+
 
 import {
   generateModelCode,
@@ -19,6 +20,20 @@ import {
 import { PARCEL, PAYMENT, USER_TYPE } from "../../constant/index.js";
 
 const module = 'Shipment';
+
+const sendMailService = async (data, subject, message) => {
+  try{
+    const result = await sendMail(
+      'michaelozor15@seafood.com',
+      data.senderEmail,
+      subject,
+      message
+    );
+    console.log('Mail sent successfully');
+  }catch (err){
+    console.error(err);
+  }
+}
 
 export async function fetchService({ query, user }) {
     try {
@@ -132,22 +147,37 @@ export async function fetchService({ query, user }) {
       }
       const { status } = data;
 
-      const returnedShipment = await Shipment.findById(recordId).exec();
+      const returnedShipment = await Shipment.findById(recordId).populate('packages').exec();
       if (!returnedShipment) throw new Error(`${module} record not found.`);
       if (`${returnedShipment.createdBy}` !== user.id) {
         throw new Error(`user ${user.email} is not an authorized user`);
       }
       const { packages } = returnedShipment;
-      console.log('shipment', returnedShipment);
-
+      const packageIdsArray = packages.map(item => item.id);
       
       if(packages.length > 0){
-        console.log('got here');
         if(status === 'DEPARTED'){
-          const updatedPackages = await Package.updateMany({_id: packages}, {$set: {"status": 'SHIPPED'}});
+          const updatedPackages = await Package.updateMany({_id: packageIdsArray}, {$set: {"status": 'SHIPPED'}});
           if(!updatedPackages){
             throw new Error(`Error updating Package status`);
           }
+          packages.forEach(async (item) => {
+            const mailResponse = await sendMailService(
+              item,
+              'SeaWay Notification Shipment Departure',
+              `
+              <p>
+                Dear customer ${item.senderName || ''}, your package(s) <b>${item.code ? `with package Code ` + item.code : ''}</b> has been added to a shipment and departed successfull.
+                This shipment can take up to 14 working days to reach it's destination.<br>
+                Expedted arrival data: ${item.expectedDate}<br>
+                Your tracking code is <h3>${ returnedShipment.code }</h3><br>
+                Thank you for trusting us.
+              </p>
+              `
+            );
+
+            if(!mailResponse) console.error('error sending Email');
+          });
         }
 
         if(status === 'ARRIVED'){
@@ -155,6 +185,23 @@ export async function fetchService({ query, user }) {
           if(!updatedPackages){
             throw new Error(`Error updating Package status`);
           }
+          packages.forEach(async (item) => {
+            const mailResponse = await sendMailService(
+              item,
+              'SeaWay Notification Shipment Arrival',
+              `
+              <p>
+                Dear customer ${item.senderName || ''}, your package(s) <b>${item.code ? `with package Code ` + item.code : ''}</b> has arrived successfully.
+                Proceed to our nearest outlet to claim your Item.<br>
+                Pls endavor to come with a mode of identification. Example driver's liecense, National ID etc.<br>
+                Your tracking code is <h3>${ returnedShipment.code }</h3><br>
+                Thank you for trusting us.
+              </p>
+              `
+            );
+
+            if(!mailResponse) console.error('error sending Email');
+          });
         }
       }
 
