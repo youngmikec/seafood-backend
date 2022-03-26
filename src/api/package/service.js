@@ -142,6 +142,7 @@ export async function fetchService({ query, user }) {
         const { amount, shippingFee } = calculateCost(parcelRecords);
         data.totalAmount = amount;
         data.totalShipingFee = shippingFee;
+        data.status = 'CHECKEDOUT';
         // updateParcelStatus(parcelRecords);
         const updatedParcels = await Parcel.updateMany({_id: parcels}, {$set: {"status": 'PACKAGED'}});
         if(!updatedParcels){

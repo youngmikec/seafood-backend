@@ -241,24 +241,13 @@
  });
  
  export const schema = {
-  
-  //  userBVN: { type: String, trim: true },
-  //  balance: { type: Number, min: 0, default: 0 },
-  //  isActive: { type: Number, enum: [0, 1], default: 0 },
-  //  wrongPin: { type: Number, default: 0 },
- 
-   //* User
    title: { type: String },
    userType: {
      type: String,
      enum: Object.values(USER_TYPE),
      default: USER_TYPE.SENDER,
    },
-  //  role: {
-  //    type: String,
-  //    enum: Object.values(USER_ROLE),
-  //    default: USER_ROLE.USER,
-  //  },
+   wallet: { type: ObjectId, ref: "Wallet", select: true },
    surname: { type: String, trim: true },
    firstName: { type: String, trim: true },
    middleName: { type: String, trim: true },
@@ -290,21 +279,8 @@
    kinPhone: { type: String },
    kinAddress: { type: String },
  
-  //  userNIN: { type: String, trim: true },
-  //  userNINScan: { type: String, trim: true },
-  //  userNINPhoto: { type: String, trim: true },
-  //  guarantorNIN: { type: String, trim: true },
-  //  guarantorNINScan: { type: String, trim: true },
-  //  guarantorNINPhoto: { type: String, trim: true },
-  //  guarantor: { type: String },
-  //  guarantorAddress: { type: String },
   //  guarantorPhone: { type: String },
    isProfileComplete: { type: Boolean, default: false },
- 
-  //  notice: { type: String },
-  //  ratings: [{ type: ObjectId }],
-  //  remark: { type: String },
-  //  bonus: { type: String },
    approvedBy: { type: ObjectId },
    approvedDate: { type: Date },
    verifiedBy: { type: ObjectId },
@@ -315,15 +291,8 @@
    otpCount: { type: Number, default: 0 },
    otpAccess: { type: Number, enum: [0, 1], default: 0 },
    otpTimeout: { type: Date },
-  //  pinUpdate: { type: Date, default: Date.now },
-  //  isPinDefault: { type: Boolean, default: true },
    accessLevel: { type: Number, default: ACCESS_LEVEL.DELETE, min: 0, max: 10 },
    isEmailVerified: { type: Boolean, default: false },
-  //  status: {
-  //    type: Number,
-  //    enum: Object.values(DATABASE.RECORD_STATUS),
-  //    default: 1,
-  //  },
    emailNotification: { type: Boolean, default: true },
    smsNotification: { type: Boolean, default: false },
    //* Authentication

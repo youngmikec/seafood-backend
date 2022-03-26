@@ -29,26 +29,26 @@
      limit: Joi.number().positive().optional(),
    });
  
-   export const estimateObject = {
-     parcels: Joi.array()
-       .items(
-         Joi.object().keys({
-           _id: Joi.any().optional(),
-           code: Joi.string().optional(),
-           name: Joi.string().optional(),
-           images: Joi.array().items(Joi.string().required()).optional(),
-           quantity: Joi.number().integer().min(1).required(),
-           mass: Joi.number().min(0).max(1000000000).required(),
-           volume: Joi.number().min(0).max(1000000000).required(),
-           worth: Joi.number().positive().required(),
-         })
-       )
-       .required(),
-   };
+export const estimateObject = {
+    parcels: Joi.array()
+    .items(
+        Joi.object().keys({
+        _id: Joi.any().optional(),
+        code: Joi.string().optional(),
+        name: Joi.string().optional(),
+        images: Joi.array().items(Joi.string().required()).optional(),
+        quantity: Joi.number().integer().min(1).required(),
+        mass: Joi.number().min(0).max(1000000000).required(),
+        volume: Joi.number().min(0).max(1000000000).required(),
+        worth: Joi.number().positive().required(),
+        })
+    )
+    .required(),
+};
  
-   export const validateEstimate = Joi.object(estimateObject);
+export const validateEstimate = Joi.object(estimateObject);
  
- export const validateAdminCreate = Joi.object({
+export const validateAdminCreate = Joi.object({
     name: Joi.string().trim().required(),
     parcels: Joi.array().items(
         Joi.string().regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
@@ -110,10 +110,10 @@
     remark: Joi.string().required(),
     isCheckedOut: Joi.boolean().required(),
     paymentMethod: Joi.string().required(),
-    paymentGateway: Joi.string().required(),
+    paymentGateway: Joi.string().optional(),
     paymentStatus: Joi.string().valid("PENDING", "SUCCESS", "FAIL").optional(),
     pickupDate: Joi.date().optional(),
-    transactionRef: Joi.string().required(),
+    transactionRef: Joi.string().optional(),
     deliveryDate: Joi.date().optional(),
     createdBy: Joi.string()
     .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
@@ -163,7 +163,7 @@
     .optional(),
  })
  
- export const schema = {
+export const schema = {
     code: { type: String, uppercase: true, index: true, required: true },
     name: { type: String, trim: true },
     parcels: [{ type: String, ref: "Parcel" }],
@@ -199,7 +199,7 @@
      deleted: { type: Boolean, default: false, select: false },
      deletedAt: { type: Date, select: false },
      deletedBy: { type: ObjectId, select: false },
- };
+};
  
  const options = DATABASE.OPTIONS;
  

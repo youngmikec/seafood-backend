@@ -62,6 +62,15 @@ export const PACKAGE = {
   }
 }
 
+export const WALLET = {
+  STATUS: {
+    PENDING: "PENDING",
+    APPROVED: "APPROVED",
+    BLOCKED: "BLOCKED",
+    DELETED: "DELETED"
+  }
+}
+
 export const EMAIL = {
   ADMIN: "freexittechnologies@gmail.com",
   SENDER: "sender@freexitnow.com",
