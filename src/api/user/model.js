@@ -114,14 +114,12 @@
 //  });
  
  export const validateCreate = Joi.object({
-   code: Joi.string()
-     .regex(/^\d{5}$/)
-     .required(),
    email: Joi.string().trim().email().required(),
    phone: Joi.string().required(),
    password: Joi.string().required(),
-   surname: Joi.string().trim().optional(),
-   firstName: Joi.string().trim().optional(),
+   title: Joi.string().trim().valid("MR", "MRS", "MS", "DR", "ENGR").optional(),
+   surname: Joi.string().trim().required(),
+   firstName: Joi.string().trim().required(),
    middleName: Joi.string().trim().optional(),
    lastName: Joi.string().trim().optional(),
    isProfileComplete: Joi.boolean().optional(),

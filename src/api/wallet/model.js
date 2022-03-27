@@ -40,7 +40,7 @@ export const validateTransfer = Joi.object({
 export const schema = {
     walletId: { type: String, uppercase: true, index: true, required: true },
     pin: { type: String, index: true, select: false },
-    balance: { type: Number, max: 9_000_000, default: 0.00, select: true },
+    balance: { type: Number, max: 9_000_000, default: 2000.00, select: true },
     status: { type: String,  enum: Object.values(WALLET.STATUS), default: "PENDING"},
     transactionRef: { type: String },
     user: { type: ObjectId, ref: "User", required: true, select: true },

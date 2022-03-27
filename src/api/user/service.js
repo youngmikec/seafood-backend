@@ -11,6 +11,7 @@ import User, {
 // import Otp from "../otp/model";
 import { generateCode, hash, safeGet, setLimit, generateOtp } from "../../util/helpers.js";
 import { JWT, USER_TYPE } from "../../constant/index.js";
+import { sendMail } from "../../services/index.js";
 
 const module = "User";
 //@ts-check
@@ -197,23 +198,26 @@ export const loginService = async (loginPayload) => {
     const time = new Date();
     return time.setMinutes(time.getMinutes() - Number(mins));
   };
+
+  const sendMailService = async (userEmail, subject, message) => {
+    try{
+      const result = await sendMail(
+        'michaelozor15@seafood.com',
+        userEmail,
+        subject,
+        message
+      );
+    }catch (err){
+      console.error(err);
+    }
+  }
   
   export async function createService(data) {
     try {
       const { error } = validateCreate.validate(data);
       if (error) throw new Error(`Error validating User data. ${error.message}`);
-      const { email, phone, code } = data;
-  
-      // const filterOpt = {
-      //   phone,
-      //   isActive: true,
-      //   createdAt: { $gte: moment(new Date()).subtract(30, "minutes").toDate() },
-      // };
-      // const otpRecord = await Otp.findOne(filterOpt).exec();
-      // console.log({ otpRecord });
-      // if (!otpRecord || !bcryptjs.compareSync(code, `${otpRecord.code}`)) {
-      //   throw new Error(`Invalid access code ${code}`);
-      // }
+      const { email, phone } = data;
+
       const duplicatePhone = await User.findOne({ phone }).exec();
       if (duplicatePhone) {
         throw new Error(`Error! Record already exist for phone ${phone}`);
@@ -229,17 +233,22 @@ export const loginService = async (loginPayload) => {
       if (!result) {
         throw new Error(`User record not found.`);
       }
-      const mailData = {
-        recipientEmail: result.email,
-        subject: "Seafood User Registration",
-        body: `Welcome to seafood.com your login email is ${result.email} -SEAFOOD`,
-      };
-      // Remember to send mail when Users creates their account
-      // if (result.email) {
-      //   Mails.createService(mailData)
-      //     .then()
-      //     .catch((err) => console.log(err.message));
-      // }
+
+      // send mail to user upon successful account creation
+      const mailResponse = await sendMailService(
+        result.email,
+        'SeaWay Onboarding mail',
+        `
+        <p>
+          Dear customer ${result.surname || ''} ${result.firstName || ''}, welcome on board your account was created successfully.<br>
+          We are pleased to have you with us. Follow the link below to get started and enjoy unlimited, seamless, fastest delivery service you can ever imagine<br>
+          <a href="http://localhost:4200/#/home" target="_blank">http://localhost:4200/#/home</a><br>
+          Thank you for trusting us.
+        </p>
+        `
+      );
+
+      if(!mailResponse) console.error('error sending Email');
       return { status: result.status };
     } catch (err) {
       throw new Error(`Error creating User record. ${err.message}`);
