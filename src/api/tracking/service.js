@@ -58,8 +58,6 @@ export async function createService (data) {
         if (!senderObj) throw new Error(`Sender ${data.createdBy} not found`);
         data.createdBy = senderObj.id;
 
-        console.log('shipment', shipment);
-
         const newRecord = new Tracking(data);
         let result = await newRecord.save();
         if (!result) {
