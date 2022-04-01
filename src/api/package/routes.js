@@ -6,7 +6,7 @@ import {
     updateHandler, 
     deleteHandler,
     adminCreateHandler,
-    // operationHandler,
+    operationHandler,
     // estimateBillingHandler,  
     // checkoutHandler, adminCreateHandler,
     // verifyPayHandler, updatePayHandler, setPayableChargeHandler,
@@ -82,6 +82,7 @@ const router = express.Router();
  * @apiError 401 master Packages only.
  */
 router.put("/package/:recordId", [checkAuth], updateHandler);
+router.put("/package/operation/:recordId", [checkAuth, isValidAdmin], operationHandler);
 
 /**
   * @api {delete} /parcel/{recordId} Delete Packages

@@ -18,7 +18,6 @@
  import Joi, { boolean } from "joi";
  import mongoose from 'mongoose';
  import { DATABASE, PAYMENT, PACKAGE } from "../../constant/index.js";
- import { Location } from "../common/index.js";
  
  const { Schema } = mongoose;
  const { ObjectId } = Schema.Types;
@@ -45,6 +44,14 @@ export const estimateObject = {
     )
     .required(),
 };
+
+export const validateOperation = Joi.object({
+    status: Joi.string().valid("CHECKEDOUT", "SHIPPED", "PICKEDUP", "CANCELLED", "ARRIVED", "DELIVERED", "CONFIRMED").required(),
+    remark: Joi.string().required(),
+    updatedBy: Joi.string()
+    .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
+    .optional(),
+}) 
  
 export const validateEstimate = Joi.object(estimateObject);
  
@@ -70,7 +77,7 @@ export const validateAdminCreate = Joi.object({
     deliveryCoordinates: Joi.array().items(
         Joi.number()
     ).required(),
-    status: Joi.string().valid("PENDING", "CHECKEDOUT", "SHIPPED", "PICKUP", "CANCELLED", "ARRIVED", "DELIVERED").optional(),
+    status: Joi.string().valid("PENDING", "CHECKEDOUT", "SHIPPED", "PICKEDUP", "CANCELLED", "ARRIVED", "DELIVERED", "CONFIRMED").optional(),
     remark: Joi.string().required(),
     transactionRef: Joi.string().optional(),
     isCheckedOut: Joi.boolean().required(),
@@ -106,7 +113,7 @@ export const validateAdminCreate = Joi.object({
     deliveryCoordinates: Joi.array().items(
         Joi.number()
     ).required(),
-    status: Joi.string().valid("PENDING", "CHECKEDOUT", "SHIPPED", "PICKUP", "CANCELLED", "ARRIVED", "DELIVERED").optional(),
+    status: Joi.string().valid("PENDING", "CHECKEDOUT", "SHIPPED", "PICKEDUP", "CANCELLED", "ARRIVED", "DELIVERED", "CONFIRMED").optional(),
     remark: Joi.string().required(),
     isCheckedOut: Joi.boolean().required(),
     paymentMethod: Joi.string().required(),

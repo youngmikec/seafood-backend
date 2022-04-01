@@ -3,6 +3,7 @@ import {
     createService,
     adminCreateService,
     updateService,
+    operationService,
     deleteService,
 } from './service.js';
 import { response, success, fail } from "../../util/response.js";
@@ -47,6 +48,18 @@ export async function updateHandler(req, res) {
     return success(res, 200, result);
   } catch (err) {
   //   loging(module, req, err);
+    return fail(res, 400, `${err.message}`);
+  }
+}
+
+export async function operationHandler(req, res) {
+  try {
+    const { recordId } = req.params;
+    const { body, user } = req;
+    const result = await operationService(recordId, body, user);
+    return success(res, 200, result);
+  } catch (err) {
+    // loging(module, req, err);
     return fail(res, 400, `${err.message}`);
   }
 }

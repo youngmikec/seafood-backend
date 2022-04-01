@@ -5,10 +5,11 @@ import Package, {
     validateCreate,
     validateAdminCreate,
     validateUpdate,
-
+    validateOperation,
 } from "./model.js";
 import User from '../user/model.js';
 import Parcel from '../parcel/model.js';
+import Wallet from '../wallet/model.js';
 import {
   generateModelCode,
   isObjecId,
@@ -23,6 +24,7 @@ import { sendMail } from "../../services/index.js";
 
 const module = 'Package';
 
+// send mail function
 const sendMailService = async (data, subject, message) => {
   try{
     const result = await sendMail(
@@ -127,53 +129,81 @@ export async function fetchService({ query, user }) {
     }
   }
 
+  const computeBalance = (initial, amount, action) => {
+    let result = 0;
+
+    if(action.toLowerCase() === 'sum'){
+      result = initial + amount;
+    }
+
+    if(action === 'sub'){
+      result = initial - amount;
+      if(result < 0){
+        throw new Error("Insufficient fund");
+      }
+    }
+    console.log('result', result);
+    return result;
+  }
+
   export async function createService(data) {
     try {
       const { error } = validateCreate.validate(data);
       if (error) {
         throw new Error(`Invalid request. ${error.message}`);
       }
-      // validateParcelDate(data);
-      // if (!data.sender) data.sender = data.createdBy;
-      const { parcels } = data;
+      
+      const { parcels, paymentMethod, amountPayable } = data;
+      const senderObj = await User.findById(data.createdBy).exec();
+      if (!senderObj) throw new Error(`Sender ${data.createdBy} not found`);
       const parcelRecords = await Parcel.find().where('_id').in(parcels).exec();
       
       if(parcelRecords){
         const { amount, shippingFee } = calculateCost(parcelRecords);
         data.totalAmount = amount;
         data.totalShipingFee = shippingFee;
+        if(paymentMethod === 'WALLET'){
+          const computedAmount = computeBalance(senderObj.balance, amountPayable, 'sum')
+          const updatedWallet = await User.findOneAndUpdate(
+            { 
+              _id: data.createdBy,
+            }, 
+            {$subtract:[senderObj.balance, amountPayable]},
+            // { $inc: { balance: computedAmount }},
+            { new: true }
+            ).exec();
+          console.log(updatedWallet.balance);
+        }
         data.status = 'CHECKEDOUT';
         // updateParcelStatus(parcelRecords);
-        const updatedParcels = await Parcel.updateMany({_id: parcels}, {$set: {"status": 'PACKAGED'}});
-        if(!updatedParcels){
-          throw new Error(`Error updating parcel status`);
-        }
+        // const updatedParcels = await Parcel.updateMany({_id: parcels}, {$set: {"status": 'PACKAGED'}});
+        // if(!updatedParcels){
+        //   throw new Error(`Error updating parcel status`);
+        // }
 
       }
-      data.code = await generateModelCode(Package);
-      const senderObj = await User.findById(data.createdBy).exec();
-      if (!senderObj) throw new Error(`Sender ${data.createdBy} not found`);
-      // data.amountPayable = generateAmountPayable(data);
-      data.createdBy = senderObj.id;
+
+      // data.code = await generateModelCode(Package);
+      // data.createdBy = senderObj.id;
       
-      const newRecord = new Package(data);
-      const result = await newRecord.save();
-      if (!result) {
-        throw new Error(`${module} record not found.`);
-      }
-      const mailResponse = await sendMailService(
-        data,
-        'Package Created Successfully',
-        `
-        <b>
-          Dear customer ${data.senderName || ''}, your package with ${parcels.length || 0} parcel item(s) has been created successfully.
-          Package is currently awaiting shipment.
-          Your package Code: <h3>${data.code}</h3>
-          Thank you for trusting us.
-        </b>
-        `
-      );
-      return result;
+      // const newRecord = new Package(data);
+      // const result = await newRecord.save();
+      // if (!result) {
+      //   throw new Error(`${module} record not found.`);
+      // }
+      // const mailResponse = await sendMailService(
+      //   data,
+      //   'Package Created Successfully',
+      //   `
+      //   <b>
+      //     Dear customer ${data.senderName || ''}, your package with ${parcels.length || 0} parcel item(s) has been created successfully.
+      //     Package is currently awaiting shipment.
+      //     Your package Code: <h3>${data.code}</h3>
+      //     Thank you for trusting us.
+      //   </b>
+      //   `
+      // );
+      // return result;
     } catch (err) {
       throw new Error(`Error creating ${module} record. ${err.message}`);
     }
@@ -194,7 +224,69 @@ export async function fetchService({ query, user }) {
       if (`${returnedPackage.paymentStatus}` !== PAYMENT.STATUS.PENDING) {
         throw new Error(`Payment Status is  ${returnedPackage.paymentStatus}`);
       }
+      
      
+      const result = await Package.findOneAndUpdate({ _id: recordId }, data, {
+        new: true,
+      }).exec();
+      if (!result) {
+        throw new Error(`${module} record not found.`);
+      }
+      return result;
+    } catch (err) {
+      throw new Error(`Error updating ${module} record. ${err.message}`);
+    }
+
+  }
+
+  export async function operationService(recordId, data, user) {
+    try {
+      const { error } = validateOperation.validate(data);
+      if (error) {
+        throw new Error(`Invalid request. ${error.message}`);
+      }
+      const { status } = data;
+      
+      const returnedPackage = await Package.findById(recordId).populate('parcels').exec();
+      if (!returnedPackage) throw new Error(`${module} record not found.`);
+      if (`${returnedPackage.createdBy}` !== user.id) {
+        throw new Error(`user ${user.email} is not the sender`);
+      }
+      // if (`${returnedPackage.paymentStatus}` !== PAYMENT.STATUS.PENDING) {
+      //   console.log(returnedPackage);
+      //   throw new Error(`Payment Status is  ${returnedPackage.paymentStatus}`);
+      // }
+      const { parcels } = returnedPackage;
+      const parcelsArray = parcels.map(item => item.id);
+      
+      if(parcels.length > 0){
+        if(status === 'DELIVERED'){
+          const updatedParcels = await Parcel.updateMany({_id: parcelsArray}, {$set: {"status": 'DELIVERED'}});
+          if(!updatedParcels){
+            throw new Error(`Error updating Package status`);
+          }
+          const mailResponse = await sendMailService(
+            returnedPackage,
+            'SeaWay Delivery Mail',
+            `
+            <p>
+              Dear customer ${returnedPackage.senderName || ''}, your package(s) <b>${returnedPackage.code ? `with package Code ` + returnedPackage.code : ''}</b> has been delivered successfully.
+              Thank you for trusting us.
+            </p>
+            `
+          );
+
+          if(!mailResponse) console.error('error sending Email');
+        }
+
+        if(status === 'CONFIRMED'){
+          const updatedParcels = await Parcel.updateMany({_id: parcelsArray}, {$set: {"status": 'CONFIRMED'}});
+          if(!updatedParcels){
+            throw new Error(`Error updating Package status`);
+          }
+        }
+      }
+
       const result = await Package.findOneAndUpdate({ _id: recordId }, data, {
         new: true,
       }).exec();

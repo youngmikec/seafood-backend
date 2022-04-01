@@ -227,7 +227,7 @@ export const loginService = async (loginPayload) => {
         throw new Error(`Error! Record already exist for email ${email}`);
       }
       if (safeGet(data, "password")) data.password = hash(data.password);
-      // data.wallet = await generateWallet();
+      data.wallet = generateCode(10);
       const newRecord = new User(data);
       const result = await newRecord.save();
       if (!result) {
