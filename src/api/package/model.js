@@ -115,7 +115,7 @@ export const validateAdminCreate = Joi.object({
     ).required(),
     status: Joi.string().valid("PENDING", "CHECKEDOUT", "SHIPPED", "PICKEDUP", "CANCELLED", "ARRIVED", "DELIVERED", "CONFIRMED").optional(),
     remark: Joi.string().required(),
-    isCheckedOut: Joi.boolean().required(),
+    isCheckedOut: Joi.boolean().optional(),
     paymentMethod: Joi.string().required(),
     paymentGateway: Joi.string().optional(),
     paymentStatus: Joi.string().valid("PENDING", "SUCCESS", "FAIL").optional(),
@@ -196,7 +196,7 @@ export const schema = {
      paymentStatus: {
        type: String,
        enum: Object.values(PAYMENT.STATUS),
-       default: PAYMENT.STATUS.PENDING,
+    //    default: PAYMENT.STATUS.PENDING,
      },
      
      pickupDate: { type: Date },

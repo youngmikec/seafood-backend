@@ -19,10 +19,8 @@ import {
   calculateDistance,
 } from "../../util/index.js";
 import User from "../user/model.js";
-// import Category from "../category/model.js";
 import { PARCEL, PAYMENT, USER_TYPE } from "../../constant/index.js";
-// import Setting from "../setting/model.js";n
-// import { distanceMatrix } from "../../services.js";
+
 
 const module = "Parcel";
 
@@ -94,30 +92,6 @@ export async function createService(data) {
     if (!senderObj) throw new Error(`Sender ${data.createdBy} not found`);
     data.amountPayable = generateAmountPayable(data);
     data.createdBy = senderObj.id;
-    //*1 Determine Distance factor
-    // const { distance, duration } = await getShipmentDistance({
-    //   locationFrom,
-    //   locationTo,
-    // });
-    // data.coverage = 1;
-    // if (data.countryFrom == data.countryTo) {
-    //   data.coverage = 2;
-    // }
-    // if (data.regionFrom == data.regionTo) {
-    //   data.coverage = 3;
-    // }
-    // data.distance = parseFloat(Math.ceil(distance * 0.001).toFixed(5)); // Convert M => Km
-    // data.travelHour = parseFloat(
-    //   Math.ceil(duration * 0.00027777777).toFixed(5)
-    // ); // Convert Sec => Hr
-
-    // //*2 Determine Urgency factor
-    // data.urgency = getUrgency(
-    //   data.travelHour,
-    //   data.desiredPickupDate,
-    //   data.desiredDeliveryDate
-    // );
-    // data.urgency = parseFloat(data.urgency.toFixed(5));
     const newRecord = new Parcel(data);
     const result = await newRecord.save();
     if (!result) {

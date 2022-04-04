@@ -67,10 +67,6 @@ export async function fetchService({ query, user }) {
     }
   }
 
-  // const updateParcelStatus = (records) => {
-  //   const result = await Parcel.updateMany({})
-  // }
-
   const calculateCost = (records) => {
     const cummulativeAmount = records.map(item => item.amountPayable).reduce((a,b) => a + b);
     const cummulativeShippingFee = records.map(item => item.shippingFee).reduce((a,b) => a + b);
@@ -83,8 +79,7 @@ export async function fetchService({ query, user }) {
       if (error) {
         throw new Error(`Invalid request. ${error.message}`);
       }
-      // validateParcelDate(data);
-      // if (!data.sender) data.sender = data.createdBy;
+     
       const { parcels } = data;
       const parcelRecords = await Parcel.find().where('_id').in(parcels).exec();
     
@@ -136,13 +131,12 @@ export async function fetchService({ query, user }) {
       result = initial + amount;
     }
 
-    if(action === 'sub'){
+    if(action.toLowerCase() === 'sub'){
       result = initial - amount;
       if(result < 0){
         throw new Error("Insufficient fund");
       }
     }
-    console.log('result', result);
     return result;
   }
 
@@ -163,47 +157,47 @@ export async function fetchService({ query, user }) {
         data.totalAmount = amount;
         data.totalShipingFee = shippingFee;
         if(paymentMethod === 'WALLET'){
-          const computedAmount = computeBalance(senderObj.balance, amountPayable, 'sum')
-          const updatedWallet = await User.findOneAndUpdate(
-            { 
-              _id: data.createdBy,
-            }, 
-            {$subtract:[senderObj.balance, amountPayable]},
-            // { $inc: { balance: computedAmount }},
-            { new: true }
-            ).exec();
-          console.log(updatedWallet.balance);
+          const computedAmount = computeBalance(senderObj.balance, amountPayable, 'sub');
+          const updatedUserWalletBalance = await User.findOneAndUpdate({_id: senderObj.id}, {balance: computedAmount},  {new: true}).exec();
+          if(!updatedUserWalletBalance){
+            data.paymentStatus = "FAIL";
+            data.isCheckedOut = false;
+            throw new Error("Error is handling transaction");
+          }
+          data.paymentStatus = "SUCCESS";
+          data.isCheckedOut = true;
+
         }
         data.status = 'CHECKEDOUT';
         // updateParcelStatus(parcelRecords);
-        // const updatedParcels = await Parcel.updateMany({_id: parcels}, {$set: {"status": 'PACKAGED'}});
-        // if(!updatedParcels){
-        //   throw new Error(`Error updating parcel status`);
-        // }
+        const updatedParcels = await Parcel.updateMany({_id: parcels}, {$set: {"status": 'PACKAGED'}});
+        if(!updatedParcels){
+          throw new Error(`Error updating parcel status`);
+        }
 
       }
 
-      // data.code = await generateModelCode(Package);
-      // data.createdBy = senderObj.id;
+      data.code = await generateModelCode(Package);
+      data.createdBy = senderObj.id;
       
-      // const newRecord = new Package(data);
-      // const result = await newRecord.save();
-      // if (!result) {
-      //   throw new Error(`${module} record not found.`);
-      // }
-      // const mailResponse = await sendMailService(
-      //   data,
-      //   'Package Created Successfully',
-      //   `
-      //   <b>
-      //     Dear customer ${data.senderName || ''}, your package with ${parcels.length || 0} parcel item(s) has been created successfully.
-      //     Package is currently awaiting shipment.
-      //     Your package Code: <h3>${data.code}</h3>
-      //     Thank you for trusting us.
-      //   </b>
-      //   `
-      // );
-      // return result;
+      const newRecord = new Package(data);
+      const result = await newRecord.save();
+      if (!result) {
+        throw new Error(`${module} record not found.`);
+      }
+      const mailResponse = await sendMailService(
+        data,
+        'Package Created Successfully',
+        `
+        <b>
+          Dear customer ${data.senderName || ''}, your package with ${parcels.length || 0} parcel item(s) has been created successfully.
+          Package is currently awaiting shipment.
+          Your package Code: <h3>${data.code}</h3>
+          Thank you for trusting us.
+        </b>
+        `
+      );
+      return result;
     } catch (err) {
       throw new Error(`Error creating ${module} record. ${err.message}`);
     }
@@ -218,7 +212,7 @@ export async function fetchService({ query, user }) {
 
       const returnedPackage = await Package.findById(recordId).exec();
       if (!returnedPackage) throw new Error(`${module} record not found.`);
-      if (`${returnedPackage.createdBy}` !== user.id) {
+      if (`${returnedPackage.createdBy}` !== user.id && user.userType !== 'ADMIN') {
         throw new Error(`user ${user.email} is not the sender`);
       }
       if (`${returnedPackage.paymentStatus}` !== PAYMENT.STATUS.PENDING) {
@@ -249,7 +243,7 @@ export async function fetchService({ query, user }) {
       
       const returnedPackage = await Package.findById(recordId).populate('parcels').exec();
       if (!returnedPackage) throw new Error(`${module} record not found.`);
-      if (`${returnedPackage.createdBy}` !== user.id) {
+      if (`${returnedPackage.createdBy}` !== user.id && user.userType !== 'ADMIN') {
         throw new Error(`user ${user.email} is not the sender`);
       }
       // if (`${returnedPackage.paymentStatus}` !== PAYMENT.STATUS.PENDING) {
