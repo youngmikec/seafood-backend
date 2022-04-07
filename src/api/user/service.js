@@ -1,4 +1,5 @@
 import aqp from "api-query-params";
+import dotenv from 'dotenv';
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import moment from "moment";
@@ -13,6 +14,7 @@ import { generateCode, hash, safeGet, setLimit, generateOtp } from "../../util/h
 import { JWT, USER_TYPE } from "../../constant/index.js";
 import { sendMail } from "../../services/index.js";
 
+dotenv.config();
 const module = "User";
 //@ts-check
 export const fetchService = async (query) => {
@@ -242,7 +244,7 @@ export const loginService = async (loginPayload) => {
         <p>
           Dear customer ${result.surname || ''} ${result.firstName || ''}, welcome on board your account was created successfully.<br>
           We are pleased to have you with us. Follow the link below to get started and enjoy unlimited, seamless, fastest delivery service you can ever imagine<br>
-          <a href="http://localhost:4200/#/home" target="_blank">http://localhost:4200/#/home</a><br>
+          <a href="${process.env.FRONTEND_URL || 'http://localhost:4200/#/home' }" target="_blank">${process.env.FRONTEND_URL || 'http://localhost:4200/#/home' }</a><br>
           Thank you for trusting us.
         </p>
         `
