@@ -245,7 +245,7 @@
      enum: Object.values(USER_TYPE),
      default: USER_TYPE.SENDER,
    },
-   wallet: { type: ObjectId, ref: "Wallet", select: true },
+   wallet: { type: String, select: true },
    balance: { type: Number, default: 5000, select: true },
    walletPin: { type: String, default: "0000", select: false},
    surname: { type: String, trim: true },
