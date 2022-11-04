@@ -101,6 +101,7 @@
      .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
      .required(),
  });
+ 
 //  export const validatePinUpdate = Joi.object({
 //    pin: Joi.string()
 //      .regex(/^\d{5}$/)
