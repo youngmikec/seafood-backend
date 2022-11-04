@@ -62,5 +62,7 @@ app.on('connection', (connection) => {
     console.log(`${connections.length} connections`);
 });
 
+// changed package json type to module
+
 // export default app;
 // module.exports = app;
