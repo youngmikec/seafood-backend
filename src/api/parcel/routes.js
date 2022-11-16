@@ -1,10 +1,7 @@
 import express from "express";
 import { checkAuth, isValidAdmin } from "../../middleware/index.js";
 import {
-    fetchHandler, createHandler, updateHandler, operationHandler,
-    estimateBillingHandler,  checkoutHandler, adminCreateHandler,
-    verifyPayHandler, updatePayHandler, setPayableChargeHandler,
-    patchHandler, deleteHandler, reportHandler,
+    fetchHandler, createHandler, updateHandler,deleteHandler,
 } from "./controller.js";
 
 const router = express.Router();

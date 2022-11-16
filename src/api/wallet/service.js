@@ -15,7 +15,7 @@ import {
   safeGet,
   getSettings,
   setLimit,
-  loging,
+  // loging,
   calculateDistance,
 } from "../../util/index.js";
 import { PAYMENT, USER_TYPE, WALLET, JWT } from "../../constant/index.js";

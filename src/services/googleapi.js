@@ -4,7 +4,8 @@ import rp from "request-promise";
 
 dotenv.config();
 
-const API_KEY = process.env.GOOGLE_API_KEY;
+// const API_KEY = process.env.GOOGLE_API_KEY;
+const API_KEY = process.env.OPEN_CAGE_API_KEY;
 
 /**
  * 
@@ -37,7 +38,8 @@ export function distanceMatrix(query = "&") {
  * @returns { results: [ { address_components, formatted_address, geometry: { location: { lat, lng } }, place_id, plus_code: { compound_code, global_code }, types} ], status }
  */
 export function geocoding(query = "&address=1600+Amphitheatre+Parkway,+Mountain+View,+CA") {
-  const API_URL = `https://maps.googleapis.com/maps/api/geocode/json?key=${API_KEY}`;
+  // const API_URL = `https://maps.googleapis.com/maps/api/geocode/json?key=${API_KEY}`;
+  const API_URL = `https://api.opencagedata.com/geocode/v1/json?q=${query}&key=${API_KEY}`;
   const headersObj = {
     Accept: "application/json",
     "Content-Type": "application/json",
@@ -45,7 +47,7 @@ export function geocoding(query = "&address=1600+Amphitheatre+Parkway,+Mountain+
   };
   const options = {
     method: "GET",
-    uri: `${API_URL}${query}`,
+    uri: `${API_URL}`,
     headers: headersObj,
     json: true,
   };

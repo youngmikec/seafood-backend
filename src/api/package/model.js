@@ -15,7 +15,7 @@
  * @description Package holds record of PARCEL Packages
  */
 
- import Joi, { boolean } from "joi";
+ import Joi from "joi";
  import mongoose from 'mongoose';
  import { DATABASE, PAYMENT, PACKAGE } from "../../constant/index.js";
  

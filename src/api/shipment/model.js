@@ -1,4 +1,4 @@
-import Joi, { any, object } from 'joi';
+import Joi from 'joi';
 import mongoose from 'mongoose';
 import { DATABASE } from "../../constant/index.js";
 

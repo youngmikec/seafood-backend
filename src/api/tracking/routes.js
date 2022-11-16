@@ -1,5 +1,5 @@
 import express from 'express';
-import { checkAuth, isValidAdmin } from '../../middleware';
+import { checkAuth, isValidAdmin } from '../../middleware/index.js';
 import {
     fetchHandler,
     createHandler,

@@ -1,21 +1,12 @@
 import {
     fetchService,
-    // adminCreateService,
     createService,
     updateService,
-    // patchService,
     deleteService,
-    // setPayableCharge,
-    // updatePayment,
-    // checkout,
-    // estimateBilling,
   } from "./service.js";
   import { response, success, fail } from "../../util/response.js";
 import router from "../user/routes.js";
-//   import { REPORT } from "../../constant/index.js";
-//   import { verifyPayment } from "./verify-payment";
-//   import * as aggregateService from "./aggregate-service";
-//   import * as operationService from "./operation-service";
+
   
   const module = "Parcel";
   

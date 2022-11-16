@@ -7,10 +7,6 @@ import {
     deleteHandler,
     adminCreateHandler,
     operationHandler,
-    // estimateBillingHandler,  
-    // checkoutHandler, adminCreateHandler,
-    // verifyPayHandler, updatePayHandler, setPayableChargeHandler,
-    // patchHandler, reportHandler,
 } from "./controller.js";
 
 const router = express.Router();

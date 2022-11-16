@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import Joi from 'joi';
-import { DATABASE } from '../../constant';
+import { DATABASE } from '../../constant/index.js';
 
 
 

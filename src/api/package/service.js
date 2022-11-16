@@ -1,7 +1,7 @@
 import aqp from 'api-query-params';
 
 import Package, { 
-    validateCheckout,
+    // validateCheckout,
     validateCreate,
     validateAdminCreate,
     validateUpdate,
@@ -9,15 +9,14 @@ import Package, {
 } from "./model.js";
 import User from '../user/model.js';
 import Parcel from '../parcel/model.js';
-import Wallet from '../wallet/model.js';
+// import Wallet from '../wallet/model.js';
 import {
   generateModelCode,
-  isObjecId,
-  safeGet,
-  getSettings,
+  // isObjecId,
+  // safeGet,
+  // getSettings,
   setLimit,
-  loging,
-  calculateDistance,
+  // loging,
 } from "../../util/index.js";
 import { PAYMENT, USER_TYPE,  } from "../../constant/index.js";
 import { sendMail } from "../../services/index.js";
