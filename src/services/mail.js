@@ -25,7 +25,7 @@ export async function sendMail(senderEmail, recipientEmail, subject, message){
 
     let info = await transporter.sendMail({
         // from: `"Seaway 👻" <michaelozor15@gmail.com>`, // sender address
-        from: `"Seaway 👻" <${senderEmail}>`, // sender address
+        from: `"Turah Logistics Int 👻" <${senderEmail}>`, // sender address
         to: `${recipientEmail}`, // list of receivers
         subject: `${subject}`, // Subject line
         text: "Hello world?", // plain text body

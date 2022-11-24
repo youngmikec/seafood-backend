@@ -1,7 +1,11 @@
 import express from "express";
 import { checkAuth, isValidAdmin } from "../../middleware/index.js";
 import {
-    fetchHandler, createHandler, updateHandler,deleteHandler,
+    fetchHandler, 
+    createHandler, 
+    updateHandler, 
+    deleteHandler,
+    billingHandler,
 } from "./controller.js";
 
 const router = express.Router();
@@ -65,6 +69,7 @@ const router = express.Router();
  */
 
  router.post("/parcel", [checkAuth], createHandler);
+ router.post("/parcel/billing", [checkAuth], billingHandler);
 //  router.post("/parcel/admin", [checkAuth, isValidAdmin], adminCreateHandler);
 
  /**

@@ -74,9 +74,48 @@ const generateAmountPayable = (data) => {
     let amount = 0;
     const defaultAmount = 2000;
     if(!data) return defaultAmount;
-    const { mass, volume, worth, quantity } = data;
-    amount += (Math.ceil((worth * 0.1) * mass * volume )) * quantity;
+    let { mass, volume, worth, quantity } = data;
+
+    if(worth < 10000) amount += (Math.ceil((worth * 0.1) * (mass / volume)) * (quantity));
+    if(worth >= 10000 && worth < 50000 ) amount += (Math.ceil((worth * 0.08) * (mass / volume)) * (quantity / 2));
+    if(worth >= 50000 && worth < 200000 ) amount += (Math.ceil((worth * 0.05) * (mass / volume)) * (quantity / 2));
+    if(worth >= 200000 && worth < 1000000 ) amount += (Math.ceil((worth * 0.025) * (mass / volume)) * (quantity / 2));
     return amount;
+}
+
+const generateShippingFee = (data) => {
+    let amount = 0;
+    const defaultAmount = 500;
+    if(!data) return defaultAmount;
+    let { mass, volume, worth, quantity } = data;
+
+    if(worth < 10000) amount = defaultAmount;
+    if(worth >= 10000 && worth < 50000 ) amount = defaultAmount * 2;
+    if(worth >= 50000 && worth < 100000 ) amount = defaultAmount * 3;
+    if(worth >= 100000 && worth < 200000 ) amount = defaultAmount * 4;
+    if(worth >= 200000 && worth < 1000000 ) amount += amount = defaultAmount * 6;
+    return amount;
+}
+
+export async function billingService(data) {
+  try {
+    const { error } = validateEstimate.validate(data);
+    if (error ) throw new Error(`Invalid Request  ${error.message}`);
+    const { items } = data;
+    let totalAmount = 0;
+    let totalShippingFee = 0;
+    for(let i = 0; i < items.length; i++){
+      const amountPayable = generateAmountPayable(items[i]);
+      totalAmount += amountPayable;
+      totalShippingFee += generateShippingFee(items[i]);
+    }
+    return { 
+      totalShippingFee,
+      totalAmountPayable: totalAmount
+    };
+  }catch (err) {
+    throw new Error(`Error getting billing ${err}`);
+  }
 }
 
 export async function createService(data) {
@@ -85,12 +124,13 @@ export async function createService(data) {
     if (error) {
       throw new Error(`Invalid request. ${error.message}`);
     }
-    validateParcelDate(data);
+    // validateParcelDate(data);
     // if (!data.sender) data.sender = data.createdBy;
     data.code = await generateModelCode(Parcel);
     const senderObj = await User.findById(data.createdBy).exec();
     if (!senderObj) throw new Error(`Sender ${data.createdBy} not found`);
     data.amountPayable = generateAmountPayable(data);
+    data.shippingFee = generateShippingFee(data);
     data.createdBy = senderObj.id;
     const newRecord = new Parcel(data);
     const result = await newRecord.save();

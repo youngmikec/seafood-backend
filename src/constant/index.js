@@ -63,6 +63,18 @@ export const PACKAGE = {
   }
 }
 
+export const DEPOSIT = {
+  STATUS: {
+    PENDING: 'PENDING',
+    APPROVED: 'APPROVED',
+    DECLINED: 'DECLINED'
+  },
+  TRXNSTATUS: {
+    FAILED: 'FAILED',
+    SUCCESSFUL: 'SUCCESSFUL',
+  }
+}
+
 export const WALLET = {
   STATUS: {
     PENDING: "PENDING",

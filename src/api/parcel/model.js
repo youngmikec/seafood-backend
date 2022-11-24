@@ -36,6 +36,9 @@ export const schemaFetch = Joi.object({
           _id: Joi.any().optional(),
           code: Joi.string().optional(),
           name: Joi.string().optional(),
+          description: Joi.string().optional(),
+          category: Joi.string().optional(),
+          identification: Joi.string().optional(),
           images: Joi.array().items(Joi.string().required()).optional(),
           quantity: Joi.number().integer().min(1).required(),
           mass: Joi.number().min(0).max(1000000000).required(),
@@ -44,9 +47,12 @@ export const schemaFetch = Joi.object({
         })
       )
       .required(),
+      createdBy: Joi.string()
+      .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
+      .optional(),
   };
 
-  export const validateEstimate = Joi.object(estimateObject);
+export const validateEstimate = Joi.object(estimateObject);
 
 export const validateAdminCreate = Joi.object({
     name: Joi.string().trim().required(),

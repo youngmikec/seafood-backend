@@ -9,12 +9,10 @@ import Package, {
 } from "./model.js";
 import User from '../user/model.js';
 import Parcel from '../parcel/model.js';
+import * as ParcelService from '../parcel/service.js';
 // import Wallet from '../wallet/model.js';
 import {
   generateModelCode,
-  // isObjecId,
-  // safeGet,
-  // getSettings,
   setLimit,
   // loging,
 } from "../../util/index.js";
@@ -140,19 +138,40 @@ export async function fetchService({ query, user }) {
   }
 
   export async function createService(data) {
+    const session = await Package.startSession();
+    session.startTransaction({
+      readConcern: { level: "snapshot"},
+      writeConcern: { w : 1},
+    });
+
     try {
       const { error } = validateCreate.validate(data);
       if (error) {
         throw new Error(`Invalid request. ${error.message}`);
       }
       
-      const { parcels, paymentMethod, amountPayable } = data;
+      const { paymentMethod, amountPayable } = data;
+      let { parcels } = data;
+      let newParcels = [];
+      let parcelIds = [];
+
       const senderObj = await User.findById(data.createdBy).exec();
       if (!senderObj) throw new Error(`Sender ${data.createdBy} not found`);
-      const parcelRecords = await Parcel.find().where('_id').in(parcels).exec();
+
+      for(let i = 0; i < parcels.length; i ++ ){
+        const payload = { ...parcels[i], createdBy: data.createdBy };
+        const newParcel = await ParcelService.createService(payload);
+        if(! newParcel ){
+          throw new Error(`Error creating parcel`);
+          break;
+        }
+        parcelIds.push(newParcel['_id']);
+        newParcels.push(newParcel);
+      }
+      // const parcelRecords = await Parcel.find().where('_id').in(parcelsId).exec();
       
-      if(parcelRecords){
-        const { amount, shippingFee } = calculateCost(parcelRecords);
+      if(newParcels.length > 0){
+        const { amount, shippingFee } = calculateCost(newParcels);
         data.totalAmount = amount;
         data.totalShipingFee = shippingFee;
         if(paymentMethod === 'WALLET'){
@@ -168,8 +187,9 @@ export async function fetchService({ query, user }) {
 
         }
         data.status = 'CHECKEDOUT';
+
         // updateParcelStatus(parcelRecords);
-        const updatedParcels = await Parcel.updateMany({_id: parcels}, {$set: {"status": 'PACKAGED'}});
+        const updatedParcels = await Parcel.updateMany({_id: parcelIds}, {$set: {"status": 'PACKAGED'}});
         if(!updatedParcels){
           throw new Error(`Error updating parcel status`);
         }
@@ -178,6 +198,11 @@ export async function fetchService({ query, user }) {
 
       data.code = await generateModelCode(Package);
       data.createdBy = senderObj.id;
+
+      const previousRecord = await Package.findOne({name: data.name}).exec();
+      if(previousRecord) throw new Error(`Record already exist for specifed name`);
+      
+      data.parcels = parcelIds;
       
       const newRecord = new Package(data);
       const result = await newRecord.save();
@@ -196,8 +221,12 @@ export async function fetchService({ query, user }) {
         </b>
         `
       );
+      await session.commitTransaction();
+      session.endSession();
       return result;
     } catch (err) {
+      await session.abortTransaction();
+      session.endSession();
       throw new Error(`Error creating ${module} record. ${err.message}`);
     }
   }

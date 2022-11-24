@@ -93,9 +93,23 @@ export const validateAdminCreate = Joi.object({
  
  export const validateCreate = Joi.object({
     name: Joi.string().trim().required(),
-    parcels: Joi.array().items(
-        Joi.string().regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
-    ).required(),
+    // parcels: Joi.array().items(
+    //     Joi.string().regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
+    // ).required(),
+    parcels: Joi.array()
+    .items(
+        Joi.object().keys({
+        name: Joi.string().required(),
+        category: Joi.string().required(),
+        description: Joi.string().required(),
+        identification: Joi.string().required(),
+        quantity: Joi.number().integer().min(1).required(),
+        mass: Joi.number().min(0).max(1000000000).required(),
+        volume: Joi.number().min(0).max(1000000000).required(),
+        worth: Joi.number().positive().required(),
+        })
+    )
+    .required(),
     amountPayable: Joi.number().min(0).required(), 
     totalAmount: Joi.number().min(0).optional(),
     totalShipingFee: Joi.number().min(0).optional(),

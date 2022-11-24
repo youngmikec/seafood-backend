@@ -136,6 +136,7 @@
   //  accountNumber: Joi.string().trim().uppercase().optional(),
   //  bankName: Joi.string().trim().uppercase().optional(),
   //  userBVN: Joi.string().trim().optional(),
+  balance: Joi.number().optional(),
   title: Joi.string().optional(),
   surname: Joi.string().trim().optional(),
   firstName: Joi.string().trim().optional(),
@@ -178,6 +179,7 @@
   export const validateAdminUpdate = Joi.object({
     title: Joi.string().optional(),
     accessLevel: Joi.number().optional(),
+    balance: Joi.number().optional(),
   //  businessName: Joi.string().trim().optional(),
    surname: Joi.string().trim().optional(),
    firstName: Joi.string().trim().optional(),

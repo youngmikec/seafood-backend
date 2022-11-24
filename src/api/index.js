@@ -6,6 +6,7 @@ import parcelRoute from './parcel/index.js';
 import shipmentRoute from './shipment/index.js';
 import trackinigRoute from './tracking/index.js';
 import walletRoute from './wallet/index.js';
+import depositRoute from './deposit/index.js';
 
 
 const router = express.Router();
@@ -17,6 +18,7 @@ router.use(shipmentRoute);
 router.use(userRoute);
 router.use(trackinigRoute);
 router.use(walletRoute);
+router.use(depositRoute);
 
 
 export default router;
