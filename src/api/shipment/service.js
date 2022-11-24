@@ -163,7 +163,7 @@ export async function fetchService({ query, user }) {
           packages.forEach(async (item) => {
             const mailResponse = await sendMailService(
               item,
-              'SeaWay Notification Shipment Departure',
+              'Turah Logistics Notification Shipment Departure',
               `
               <p>
                 Dear customer ${item.senderName || ''}, your package(s) <b>${item.code ? `with package Code ` + item.code : ''}</b> has been added to a shipment and departed successfull.
@@ -187,7 +187,7 @@ export async function fetchService({ query, user }) {
           packages.forEach(async (item) => {
             const mailResponse = await sendMailService(
               item,
-              'SeaWay Notification Shipment Arrival',
+              'Turah Logistics Notification Shipment Arrival',
               `
               <p>
                 Dear customer ${item.senderName || ''}, your package(s) <b>${item.code ? `with package Code ` + item.code : ''}</b> has arrived successfully.

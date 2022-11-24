@@ -289,7 +289,7 @@ export async function fetchService({ query, user }) {
           }
           const mailResponse = await sendMailService(
             returnedPackage,
-            'SeaWay Delivery Mail',
+            'Turah Logistics Delivery Mail',
             `
             <p>
               Dear customer ${returnedPackage.senderName || ''}, your package(s) <b>${returnedPackage.code ? `with package Code ` + returnedPackage.code : ''}</b> has been delivered successfully.
