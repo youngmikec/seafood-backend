@@ -39,7 +39,7 @@ export const validateOperation = Joi.object({
 export const schema = {
     code: { type: String, required: true, select: true },
     user: { type: ObjectId, ref: "User", select: true },
-    pin: { type: String, required: true, select: false},
+    pin: { type: String, required: true, select: false },
     amount: { type: Number, },
     depositorBank: { type: String, required: true},
     depositorAcctName: { type: String, required: true},

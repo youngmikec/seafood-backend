@@ -102,17 +102,17 @@
      .required(),
  });
  
-//  export const validatePinUpdate = Joi.object({
-//    pin: Joi.string()
-//      .regex(/^\d{5}$/)
-//      .required(),
-//    newPin: Joi.string()
-//      .regex(/^\d{5}$/)
-//      .required(),
-//    updatedBy: Joi.string()
-//      .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
-//      .required(),
-//  });
+ export const validatePinUpdate = Joi.object({
+   pin: Joi.string()
+     .regex(/^\d{5}$/)
+     .required(),
+   newPin: Joi.string()
+     .regex(/^\d{5}$/)
+     .required(),
+   updatedBy: Joi.string()
+     .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
+     .required(),
+ });
  
  export const validateCreate = Joi.object({
    email: Joi.string().trim().email().required(),
@@ -130,115 +130,81 @@
  });
  
  export const validateUserUpdate = Joi.object({
-  //  pin: Joi.string().length(5).regex(/^\d+$/).optional(),
-  //  businessName: Joi.string().trim().optional(),
-  //  accountName: Joi.string().trim().uppercase().optional(),
-  //  accountNumber: Joi.string().trim().uppercase().optional(),
-  //  bankName: Joi.string().trim().uppercase().optional(),
-  //  userBVN: Joi.string().trim().optional(),
-  balance: Joi.number().optional(),
-  title: Joi.string().optional(),
-  surname: Joi.string().trim().optional(),
-  firstName: Joi.string().trim().optional(),
-  middleName: Joi.string().trim().optional(),
-  lastName: Joi.string().trim().optional(),
-  gender: Joi.string().trim().optional(),
-  birthDate: Joi.date().optional(),
-  address: Joi.string().optional(),
-  coverage: Joi.number()
-  .valid(...Object.values(COVERAGE))
-  .optional(),
-  location: Joi.any().optional(),
-  state: Joi.string()
-  .optional(),
-   county: Joi.string()
-   .optional(),
-   country: Joi.string()
-   .optional(),
-   password: Joi.string().optional(),
-   email: Joi.string().trim().email().optional(),
-   phone: Joi.string().optional(),
-   phone2: Joi.string().optional(),
-   kin: Joi.string().optional(),
-   kinPhone: Joi.string().optional(),
-   kinAddress: Joi.string().optional(),
-   //  userNIN: Joi.string().trim().optional(),
-   //  userNINScan: Joi.string().trim().optional(),
-   //  userNINPhoto: Joi.string().trim().optional(),
-   //  guarantorNIN: Joi.string().trim().optional(),
-   //  guarantorNINScan: Joi.string().trim().optional(),
-   //  guarantorNINPhoto: Joi.string().trim().optional(),
-   //  guarantor: Joi.string().trim().optional(),
-   //  guarantorAddress: Joi.string().trim().optional(),
-   //  guarantorPhone: Joi.string().trim().optional(),
-   updatedBy: Joi.string()
-   .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
-   .required(),
+    walletPin: Joi.string().length(5).regex(/^\d+$/).optional(),
+    title: Joi.string().optional(),
+    surname: Joi.string().trim().optional(),
+    firstName: Joi.string().trim().optional(),
+    middleName: Joi.string().trim().optional(),
+    lastName: Joi.string().trim().optional(),
+    gender: Joi.string().trim().optional(),
+    birthDate: Joi.date().optional(),
+    address: Joi.string().optional(),
+    coverage: Joi.number()
+    .valid(...Object.values(COVERAGE))
+    .optional(),
+    location: Joi.any().optional(),
+    state: Joi.string()
+    .optional(),
+    county: Joi.string()
+    .optional(),
+    country: Joi.string()
+    .optional(),
+    password: Joi.string().optional(),
+    newPassword: Joi.string().optional(),
+    email: Joi.string().trim().email().optional(),
+    phone: Joi.string().optional(),
+    phone2: Joi.string().optional(),
+    kin: Joi.string().optional(),
+    kinPhone: Joi.string().optional(),
+    kinAddress: Joi.string().optional(),
+    updatedBy: Joi.string()
+    .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
+    .required(),
   });
   
   export const validateAdminUpdate = Joi.object({
     title: Joi.string().optional(),
     accessLevel: Joi.number().optional(),
     balance: Joi.number().optional(),
-  //  businessName: Joi.string().trim().optional(),
-   surname: Joi.string().trim().optional(),
-   firstName: Joi.string().trim().optional(),
-   middleName: Joi.string().trim().optional(),
-   lastName: Joi.string().trim().optional(),
-   gender: Joi.string().trim().optional(),
-   birthDate: Joi.date().optional(),
-   address: Joi.string().optional(),
-   coverage: Joi.number()
-     .valid(...Object.values(COVERAGE))
-     .optional(),
-   state: Joi.string()
-     .optional(),
-   county: Joi.string()
-     .optional(),
-   country: Joi.string()
-     .optional(),
-   password: Joi.string().optional(),
-   otp: Joi.string().optional(),
-   otpCount: Joi.number().optional(),
-   email: Joi.string().trim().email().optional(),
-   isEmailVerified: Joi.boolean().optional(),
-   phone: Joi.string().optional(),
-   phone2: Joi.string().optional(),
-   kin: Joi.string().optional(),
-   kinPhone: Joi.string().optional(),
-   kinAddress: Joi.string().optional(),
-  //  notice: Joi.string().optional(),
-  //  remark: Joi.string().optional(),
-  //  bonus: Joi.string().optional(),
-  //  userBVN: Joi.string().trim().optional(),
-  //  userNIN: Joi.string().trim().optional(),
-  //  userNINScan: Joi.string().trim().optional(),
-  //  userNINPhoto: Joi.string().trim().optional(),
-  //  guarantorNIN: Joi.string().trim().optional(),
-  //  guarantorNINScan: Joi.string().trim().optional(),
-  //  guarantorNINPhoto: Joi.string().trim().optional(),
-  //  guarantor: Joi.string().trim().optional(),
-  //  guarantorAddress: Joi.string().trim().optional(),
-  //  guarantorPhone: Joi.string().trim().optional(),
-  //  isDocumented: Joi.number().valid(0, 1).optional(),
-  //  status: Joi.number()
-  //    .valid(...Object.values(DATABASE.RECORD_STATUS))
-  //    .optional(),
-   userType: Joi.string()
-     .valid(...Object.values(USER_TYPE))
-     .optional(),
-  //  role: Joi.string()
-  //    .valid(...Object.values(USER_ROLE))
-  //    .optional(),
-   approvedBy: Joi.string().optional(),
-   approvedDate: Joi.date().optional(),
-   verifiedBy: Joi.string().optional(),
-   verifiedDate: Joi.date().optional(),
-   disengagedBy: Joi.number().optional(),
-   disengagedDate: Joi.date().optional(),
-   updatedBy: Joi.string()
-     .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
-     .required(),
+    walletPin: Joi.string().length(5).regex(/^\d+$/).optional(),
+    surname: Joi.string().trim().optional(),
+    firstName: Joi.string().trim().optional(),
+    middleName: Joi.string().trim().optional(),
+    lastName: Joi.string().trim().optional(),
+    gender: Joi.string().trim().optional(),
+    birthDate: Joi.date().optional(),
+    address: Joi.string().optional(),
+    coverage: Joi.number()
+      .valid(...Object.values(COVERAGE))
+      .optional(),
+    state: Joi.string()
+      .optional(),
+    county: Joi.string()
+      .optional(),
+    country: Joi.string()
+      .optional(),
+    password: Joi.string().optional(),
+    otp: Joi.string().optional(),
+    otpCount: Joi.number().optional(),
+    email: Joi.string().trim().email().optional(),
+    isEmailVerified: Joi.boolean().optional(),
+    phone: Joi.string().optional(),
+    phone2: Joi.string().optional(),
+    kin: Joi.string().optional(),
+    kinPhone: Joi.string().optional(),
+    kinAddress: Joi.string().optional(),
+    userType: Joi.string()
+      .valid(...Object.values(USER_TYPE))
+      .optional(),
+    approvedBy: Joi.string().optional(),
+    approvedDate: Joi.date().optional(),
+    verifiedBy: Joi.string().optional(),
+    verifiedDate: Joi.date().optional(),
+    disengagedBy: Joi.number().optional(),
+    disengagedDate: Joi.date().optional(),
+    updatedBy: Joi.string()
+      .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
+      .required(),
  });
  
  export const schema = {
@@ -248,6 +214,7 @@
      enum: Object.values(USER_TYPE),
      default: USER_TYPE.SENDER,
    },
+   wallet: { type: String, select: true },
    wallet: { type: String, select: true },
    balance: { type: Number, default: 5000, select: true },
    walletPin: { type: String, default: "0000", select: false},

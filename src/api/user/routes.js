@@ -186,7 +186,7 @@ router.put(
  * @apiError 401 master access only.
  */
 router.put("/user/me", [checkAuth], updateByUserHandler);
-router.put("/user/pin/wallet", [checkAuth], updatePinHandler);
+router.put("/user/pin-reset", [checkAuth], updatePinHandler);
 
 /**
  * @api {patch} /api/user/{recordId} Patch users

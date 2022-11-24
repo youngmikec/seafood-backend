@@ -7,6 +7,7 @@ import User, {
   validateCreate,
   validateAdminUpdate,
   validateUserUpdate,
+  validatePinUpdate,
   schemaLogin,
 } from "./model.js";
 // import Otp from "../otp/model";
@@ -239,7 +240,7 @@ export const loginService = async (loginPayload) => {
       // send mail to user upon successful account creation
       const mailResponse = await sendMailService(
         result.email,
-        'SeaWay Onboarding mail',
+        'Turah Logistics Onboarding mail',
         `
         <p>
           Dear customer ${result.surname || ''} ${result.firstName || ''}, welcome on board your account was created successfully.<br>
@@ -437,20 +438,21 @@ export const loginService = async (loginPayload) => {
     }
   }
   
-  export async function updatePinService(wallet, data, user) {
+  export async function updatePinService(data, user) {
     try {
       const { error } = validatePinUpdate.validate(data);
       if (error) throw new Error(`Invalid payload. ${error.message}`);
       const { pin, newPin, updatedBy } = data;
-      const AccountFrom = await securityService(wallet, pin, user);
+
+      const senderObj = await User.findById(updatedBy).exec();
+      if (!senderObj) throw new Error(`User ${updatedBy} not found`);
+
       const update = {
-        pin: hash(newPin),
-        pinUpdate: Date.now(),
-        isPinDefault: false,
+        walletPin: hash(newPin),
         updatedBy,
       };
       const result = await User.findOneAndUpdate(
-        { _id: AccountFrom.id },
+        { _id: senderObj.id },
         update,
         { new: true }
       );

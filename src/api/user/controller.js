@@ -83,11 +83,11 @@ import { response, success, fail } from '../../util/response.js';
       return fail(res, 400, `${err.message}`);
     }
   }
+
   
   export const updatePinHandler = async (req, res) => {
     try {
       const result = await updatePinService(
-        // req.params.wallet,
         req.body,
         req.user
       );
