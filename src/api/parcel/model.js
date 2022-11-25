@@ -54,29 +54,6 @@ export const schemaFetch = Joi.object({
 
 export const validateEstimate = Joi.object(estimateObject);
 
-export const validateAdminCreate = Joi.object({
-    name: Joi.string().trim().required(),
-    description: Joi.string().required(),
-    quantity: Joi.number().integer().required(),
-    volume: Joi.number().required(),
-    mass: Joi.number().required(),
-    worth: Joi.number().required(),
-    parcelImage: Joi.string().optional(),
-    departureDate: Joi.date().required(),
-    expectedDate:  Joi.date().required(),
-    deliveryDate:  Joi.date().optional(),
-    status: Joi.string().valid("PENDING", "PACKAGED", "SHIPPED", "ARRIVED", "DELIVERED", "CONFIRMED").optional(),
-    isParcelPaid: Joi.boolean().required(),
-    category: Joi.string().required(),
-    amountPayable: Joi.number().min(1000).max(9999999999999).required(),
-    shippingFee: Joi.number().min(100).required(),
-    identification: Joi.string().valid("NATIONAL_ID", "VOTERS_CARD", "COMPANY_ID", "DRIVERS_LICENSE").required(),
-    remark: Joi.string().optional(),
-    createdBy: Joi.string()
-    .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
-    .required(),
-})
-
 export const validateCreate = Joi.object({
     name: Joi.string().trim().required(),
     description: Joi.string().required(),
