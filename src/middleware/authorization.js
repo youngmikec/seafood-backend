@@ -29,7 +29,16 @@ export const decodeToken = async (token) => {
           resolve (decoded);
       });
     });
-  };  
+};  
+
+export const decodeInfo = async (data) => {
+    return new Promise(function(resolve, reject) {
+      verify(data, JWT.jwtSecret, async (err, decoded) => {
+          if (err) reject(new Error("Invalid token"));
+          resolve (decoded);
+      });
+    });
+};  
     
 export async function checkAuth(req, res, next) {
     try {

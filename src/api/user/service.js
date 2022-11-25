@@ -8,6 +8,7 @@ import User, {
   validateAdminUpdate,
   validateUserUpdate,
   validatePinUpdate,
+  validatePasswordUpdate,
   schemaLogin,
 } from "./model.js";
 // import Otp from "../otp/model";
@@ -449,6 +450,34 @@ export const loginService = async (loginPayload) => {
 
       const update = {
         walletPin: hash(newPin),
+        updatedBy,
+      };
+      const result = await User.findOneAndUpdate(
+        { _id: senderObj.id },
+        update,
+        { new: true }
+      );
+      if (!result) {
+        throw new Error(`${module} record not found.`);
+      }
+      //! Notify User
+      return result;
+    } catch (err) {
+      throw new Error(`Pin update service: ${err.message}`);
+    }
+  }
+
+  export async function updatePasswordService(data, user) {
+    try {
+      const { error } = validatePasswordUpdate.validate(data);
+      if (error) throw new Error(`Invalid payload. ${error.message}`);
+      const { oldPassword, newPassword, updatedBy } = data;
+
+      const senderObj = await User.findById(updatedBy).exec();
+      if (!senderObj) throw new Error(`User ${updatedBy} not found`);
+
+      const update = {
+        password: hash(newPassword),
         updatedBy,
       };
       const result = await User.findOneAndUpdate(

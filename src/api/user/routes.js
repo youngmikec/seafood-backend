@@ -8,6 +8,7 @@ import {
   updateByAdminHandler,
   updateByUserHandler,
   updatePinHandler,
+  updatePasswordHandler,
   deleteHandler,
   userLoginHandler,
   adminLoginHandler,
@@ -187,6 +188,7 @@ router.put(
  */
 router.put("/user/me", [checkAuth], updateByUserHandler);
 router.put("/user/pin-reset", [checkAuth], updatePinHandler);
+router.put("/user/password-reset", [checkAuth], updatePasswordHandler);
 
 /**
  * @api {patch} /api/user/{recordId} Patch users

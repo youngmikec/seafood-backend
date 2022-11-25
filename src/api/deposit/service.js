@@ -1,5 +1,5 @@
 import aqp from 'api-query-params';
-
+import bcryptjs from 'bcryptjs';
 import User from '../user/model.js';
 import Deposit, { 
     validateCreate,
@@ -12,6 +12,7 @@ import {
   computeBalance
   // loging,
 } from "../../util/index.js";
+import { decodeInfo, decodeToken } from '../../middleware/index.js';
 import { DEPOSIT, USER_TYPE,  } from "../../constant/index.js";
 
 const module = 'Deposit';
@@ -114,6 +115,9 @@ try {
 
     const senderObj = await User.findById(data.createdBy).exec();
     if (!senderObj) throw new Error(`User ${data.createdBy} not found`);
+    const { pin } = data;
+
+    if(!bcryptjs.compareSync(pin, `${senderObj.walletPin}`)) throw new Error(`Wrong pin`);
 
     data.code = await generateModelCode(Deposit);
     data.createdBy = senderObj.id;

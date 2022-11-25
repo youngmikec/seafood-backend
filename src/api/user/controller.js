@@ -5,6 +5,7 @@ import {
     updateByUserService,
     updateByAdminService,
     updatePinService,
+    updatePasswordService,
     patchService,
     deleteService,
     loginService,
@@ -88,6 +89,19 @@ import { response, success, fail } from '../../util/response.js';
   export const updatePinHandler = async (req, res) => {
     try {
       const result = await updatePinService(
+        req.body,
+        req.user
+      );
+      return success(res, 200, result, `${module}`);
+    } catch (err) {
+    //   loging(module, req, err);
+      return fail(res, 400, `${err.message}`);
+    }
+  }
+
+  export const updatePasswordHandler = async (req, res) => {
+    try {
+      const result = await updatePasswordService(
         req.body,
         req.user
       );

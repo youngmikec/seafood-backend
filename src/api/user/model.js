@@ -92,16 +92,6 @@
      .optional(),
  });
  
- export const validatePasswordUpdate = Joi.object({
-   password: Joi.string()
-     .required(),
-   newPassword: Joi.string()
-     .required(),
-   updatedBy: Joi.string()
-     .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
-     .required(),
- });
- 
  export const validatePinUpdate = Joi.object({
    pin: Joi.string()
      .regex(/^\d{5}$/)
@@ -109,6 +99,14 @@
    newPin: Joi.string()
      .regex(/^\d{5}$/)
      .required(),
+   updatedBy: Joi.string()
+     .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
+     .required(),
+ });
+
+ export const validatePasswordUpdate = Joi.object({
+   oldPassword: Joi.string().required(),
+   newPassword: Joi.string().required(),
    updatedBy: Joi.string()
      .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
      .required(),
@@ -215,9 +213,8 @@
      default: USER_TYPE.SENDER,
    },
    wallet: { type: String, select: true },
-   wallet: { type: String, select: true },
    balance: { type: Number, default: 5000, select: true },
-   walletPin: { type: String, default: "0000", select: false},
+   walletPin: { type: String, default: "0000", select: true},
    surname: { type: String, trim: true },
    firstName: { type: String, trim: true },
    middleName: { type: String, trim: true },
