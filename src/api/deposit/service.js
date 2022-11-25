@@ -9,9 +9,10 @@ import Deposit, {
 import {
   generateModelCode,
   setLimit,
+  computeBalance
   // loging,
 } from "../../util/index.js";
-import { PAYMENT, USER_TYPE,  } from "../../constant/index.js";
+import { DEPOSIT, USER_TYPE,  } from "../../constant/index.js";
 
 const module = 'Deposit';
 
@@ -141,62 +142,82 @@ try {
 }
 }
 
-  export async function updateService(recordId, data, user) {
-    try {
-      const { error } = validateUpdate.validate(data);
-      if (error) {
-        throw new Error(`Invalid request. ${error.message}`);
-      }
-
-      const returnedDeposit = await Deposite.findById(recordId).exec();
-      if (!returnedDeposit) throw new Error(`${module} record not found.`);
-      if (`${returnedDeposit.createdBy}` !== user.id && user.userType !== 'ADMIN') {
-        throw new Error(`user ${user.email} is not the account owner`);
-      }
-      
-     
-      const result = await Deposit.findOneAndUpdate({ _id: recordId }, data, {
-        new: true,
-      }).exec();
-      if (!result) {
-        throw new Error(`${module} record not found.`);
-      }
-      return result;
-    } catch (err) {
-      throw new Error(`Error updating ${module} record. ${err.message}`);
+export async function updateService(recordId, data, user) {
+  try {
+    const { error } = validateUpdate.validate(data);
+    if (error) {
+      throw new Error(`Invalid request. ${error.message}`);
     }
 
-  }
-
-  export async function operationService(recordId, data, user) {
-    try {
-      const { error } = validateOperation.validate(data);
-      if (error) {
-        throw new Error(`Invalid request. ${error.message}`);
-      }
-      const { status } = data;
-      
-      const returnedDeposit = await Deposite.findById(recordId).exec();
-      if (!returnedDeposit) throw new Error(`${module} record not found.`);
-      if (user.userType !== 'ADMIN') {
-        throw new Error(`user ${user.email} cannot perform this action`);
-      }
-      if (`${returnedDeposit.STATUS}` !== DEPOSIT.STATUS.PENDING) {
-        throw new Error(`Cannot perform ${status} on record with ${returnedDeposit.status}`);
-      }
+    const returnedDeposit = await Deposit.findById(recordId).exec();
+    if (!returnedDeposit) throw new Error(`${module} record not found.`);
+    if (`${returnedDeposit.createdBy}` !== user.id && user.userType !== 'ADMIN') {
+      throw new Error(`user ${user.email} is not the account owner`);
+    }
     
-      const result = await Deposit.findOneAndUpdate({ _id: recordId }, data, {
-        new: true,
-      }).exec();
-      if (!result) {
-        throw new Error(`${module} record not found.`);
-      }
-      return result;
-    } catch (err) {
-      throw new Error(`Error updating ${module} record. ${err.message}`);
+    
+    const result = await Deposit.findOneAndUpdate({ _id: recordId }, data, {
+      new: true,
+    }).exec();
+    if (!result) {
+      throw new Error(`${module} record not found.`);
+    }
+    return result;
+  } catch (err) {
+    throw new Error(`Error updating ${module} record. ${err.message}`);
+  }
+
+}
+
+export async function operationService(recordId, data, user) {
+  const session = await Deposit.startSession();
+  session.startTransaction({
+    readConcern: { level: "snapshot"},
+    writeConcern: { w : 1},
+  });
+
+  try {
+    const { error } = validateOperation.validate(data);
+    if (error) {
+      throw new Error(`Invalid request. ${error.message}`);
+    }
+    const { status } = data;
+    
+    const returnedDeposit = await Deposit.findById(recordId).exec();
+    if (!returnedDeposit) throw new Error(`${module} record not found.`);
+    if (user.userType !== 'ADMIN') {
+      throw new Error(`user ${user.email} cannot perform this action`);
+    }
+    if (`${returnedDeposit.status}` !== DEPOSIT.STATUS.PENDING) {
+      throw new Error(`Cannot perform ${status} on record with ${returnedDeposit.status}`);
     }
 
+    const depositor = returnedDeposit.user;
+    const previousUser = await User.findById(depositor).exec();
+    if(!previousUser) throw new Error(`Depositor not found!`);
+
+    if(status === 'APPROVED'){
+      const computedAmount = computeBalance(previousUser.balance, returnedDeposit.amount, 'sum');
+      const updatedUserWalletBalance = await User.findOneAndUpdate({_id: depositor}, {balance: computedAmount},  {new: true}).exec();
+    }
+  
+    const result = await Deposit.findOneAndUpdate({ _id: recordId }, data, {
+      new: true,
+    }).exec();
+    if (!result) {
+      throw new Error(`${module} record not found.`);
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+    return result;
+  } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new Error(`Error updating ${module} record. ${err.message}`);
   }
+
+}
   
   export async function deleteService(recordId) {
     try {

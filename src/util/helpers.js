@@ -104,6 +104,22 @@ export default function addToArrayOfObjects(
   return arrayOfObjects;
 }
 
+export const computeBalance = (initial, amount, action) => {
+  let result = 0;
+
+  if(action.toLowerCase() === 'sum'){
+    result = initial + amount;
+  }
+
+  if(action.toLowerCase() === 'sub'){
+    result = initial - amount;
+    if(result < 0){
+      throw new Error("Insufficient fund");
+    }
+  }
+  return result;
+}
+
 /**
  * @description getClientAccess get the Ip Address and TimeSTamp of a request object.
  * @param {String} req the request object

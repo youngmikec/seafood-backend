@@ -14,6 +14,7 @@ import * as ParcelService from '../parcel/service.js';
 import {
   generateModelCode,
   setLimit,
+  computeBalance,
   // loging,
 } from "../../util/index.js";
 import { PAYMENT, USER_TYPE,  } from "../../constant/index.js";
@@ -119,22 +120,6 @@ export async function fetchService({ query, user }) {
     } catch (err) {
       throw new Error(`Error creating ${module} record. ${err.message}`);
     }
-  }
-
-  const computeBalance = (initial, amount, action) => {
-    let result = 0;
-
-    if(action.toLowerCase() === 'sum'){
-      result = initial + amount;
-    }
-
-    if(action.toLowerCase() === 'sub'){
-      result = initial - amount;
-      if(result < 0){
-        throw new Error("Insufficient fund");
-      }
-    }
-    return result;
   }
 
   export async function createService(data) {

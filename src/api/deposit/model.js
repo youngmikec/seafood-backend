@@ -32,7 +32,9 @@ export const validateUpdate = Joi.object({
 export const validateOperation = Joi.object({
     status: Joi.string().valid(...Object.values(DEPOSIT.STATUS)).required(),
     remark: Joi.string().trim().required(),
-
+    updatedBy: Joi.string()
+    .regex(DATABASE.OBJECT_ID_REGEX, "valid objectID")
+    .optional(),
 })
 
 
