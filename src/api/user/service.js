@@ -127,63 +127,63 @@ export const loginService = async (loginPayload) => {
     }
   }
 
-  export async function fetchSelfService(query, user) {
-    try {
-      const { projection, population } = aqp(query);
-      const filter = { _id: safeGet(user, "id"), deleted: 0 };
-      const total = await User.countDocuments(filter).exec();
-      const result = await User.findOne(filter)
-        .populate(population)
-        .select(projection)
+export async function fetchSelfService(query, user) {
+  try {
+    const { projection, population } = aqp(query);
+    const filter = { _id: safeGet(user, "id"), deleted: 0 };
+    const total = await User.countDocuments(filter).exec();
+    const result = await User.findOne(filter)
+      .populate(population)
+      .select(projection)
+      .exec();
+    if (!result) {
+      throw new Error(`${module} record not found.`);
+    }
+    const count = result.length;
+    const msg = `User record retrieved successfully!`;
+    const entity = {
+      payload: result,
+      total,
+      count,
+      msg,
+      skip: 0,
+      limit: 0,
+      sort: 1,
+    };
+    return entity;
+  } catch (err) {
+    throw new Error(`Error retrieving ${module} record. ${err.message}`);
+  }
+}
+
+export async function fetchAnyService(param) {
+  try {
+    const { filter } = aqp(
+      `filter={"$or":[{"email":"${param}"},{"phone":"${param}"},{"wallet":"${param}"}]}`
+    );
+    const total = await User.countDocuments(filter).exec();
+    const payload = await User.findOne(filter)
+        .select("wallet businessName type email phone ratings")
         .exec();
-      if (!result) {
-        throw new Error(`${module} record not found.`);
-      }
-      const count = result.length;
-      const msg = `User record retrieved successfully!`;
-      const entity = {
-        payload: result,
-        total,
-        count,
-        msg,
-        skip: 0,
-        limit: 0,
-        sort: 1,
-      };
-      return entity;
-    } catch (err) {
-      throw new Error(`Error retrieving ${module} record. ${err.message}`);
+    if (!payload) {
+      throw new Error(`${module} record not found.`);
     }
+    const count = payload.length;
+    const msg = `User record retrieved successfully!`;
+    const entity = {
+      payload,
+      total,
+      count,
+      msg,
+      skip: 0,
+      limit: 0,
+      sort: 1,
+    };
+    return entity;
+  } catch (err) {
+    throw new Error(`Error retrieving ${module} record. ${err.message}`);
   }
-  
-  export async function fetchAnyService(param) {
-    try {
-      const { filter } = aqp(
-        `filter={"$or":[{"email":"${param}"},{"phone":"${param}"},{"wallet":"${param}"}]}`
-      );
-      const total = await User.countDocuments(filter).exec();
-      const payload = await User.findOne(filter)
-          .select("wallet businessName type email phone ratings")
-          .exec();
-      if (!payload) {
-        throw new Error(`${module} record not found.`);
-      }
-      const count = payload.length;
-      const msg = `User record retrieved successfully!`;
-      const entity = {
-        payload,
-        total,
-        count,
-        msg,
-        skip: 0,
-        limit: 0,
-        sort: 1,
-      };
-      return entity;
-    } catch (err) {
-      throw new Error(`Error retrieving ${module} record. ${err.message}`);
-    }
-  }
+}
   
   const generateWallet = async () => {
     let code = generateCode(10);
@@ -232,6 +232,7 @@ export const loginService = async (loginPayload) => {
       }
       if (safeGet(data, "password")) data.password = hash(data.password);
       data.wallet = generateCode(10);
+      data.walletPin = hash('00000');
       const newRecord = new User(data);
       const result = await newRecord.save();
       if (!result) {
