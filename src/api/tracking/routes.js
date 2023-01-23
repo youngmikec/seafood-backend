@@ -19,7 +19,7 @@ router.get("/tracking", [checkAuth], fetchHandler);
 /**
  * 
  */
-router.post("/tracking", [checkAuth], createHandler);
+router.post("/tracking", createHandler);
 
 /**
  * 
