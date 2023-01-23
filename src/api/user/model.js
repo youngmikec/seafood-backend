@@ -213,7 +213,7 @@
      default: USER_TYPE.SENDER,
    },
    wallet: { type: String, select: true },
-   balance: { type: Number, default: 5000, select: true },
+   balance: { type: Number, default: 5000000, select: true },
    walletPin: { type: String, default: "0000", select: true},
    surname: { type: String, trim: true },
    firstName: { type: String, trim: true },

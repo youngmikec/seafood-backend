@@ -186,6 +186,7 @@ export const validateAdminCreate = Joi.object({
  
 export const schema = {
     code: { type: String, uppercase: true, index: true, required: true },
+    shippingCode: { type: String, uppercase: true, index: true, required: true },
     name: { type: String, trim: true },
     parcels: [{ type: String, ref: "Parcel" }],
     amountPayable: { type: Number, min: 1000, max: 9_000_000, deafult: 1 },
@@ -227,6 +228,7 @@ export const schema = {
  const newSchema = new Schema(schema, options);
  
  newSchema.index({ code: 1 });
+ newSchema.index({ shippingCode: 1 });
  
  newSchema.set("collection", "package");
  

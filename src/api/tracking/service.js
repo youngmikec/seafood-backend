@@ -52,7 +52,7 @@ export async function createService (data) {
         if(!shipment){
             throw new Error(`Invalid tracking code ${trackingCode}`);
         }
-        data.shipment = id;
+        data.shipment = shipment.id;
 
         const senderObj = await User.findById(data.createdBy).exec();
         if (!senderObj) throw new Error(`Sender ${data.createdBy} not found`);

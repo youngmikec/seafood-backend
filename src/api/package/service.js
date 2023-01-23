@@ -9,6 +9,7 @@ import Package, {
 } from "./model.js";
 import User from '../user/model.js';
 import Parcel from '../parcel/model.js';
+import Shipment from '../shipment/model.js';
 import * as ParcelService from '../parcel/service.js';
 // import Wallet from '../wallet/model.js';
 import {
@@ -182,6 +183,7 @@ export async function fetchService({ query, user }) {
       }
 
       data.code = await generateModelCode(Package);
+      data.shippingCode = await generateModelCode(Shipment);
       data.createdBy = senderObj.id;
 
       const previousRecord = await Package.findOne({name: data.name}).exec();
